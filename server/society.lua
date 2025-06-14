@@ -8,6 +8,10 @@ function DuckSociety()
   self.name = ""
   self.setName = function(name) self.name = string.lower(name) end
   self.getName = function() return self.name end
+  
+  self.label = ""
+  self.setLabel = function(label) self.label = label end
+  self.getLabel = function() return self.label end
 
   return self
 end
