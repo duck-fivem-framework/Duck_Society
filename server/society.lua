@@ -1,1 +1,13 @@
+function DuckSociety()
+  local self = {}
 
+  self.id = nil
+  self.setId = function(id) self.id = tonumber(id) end
+  self.getId = function() return self.id end
+  
+  self.name = ""
+  self.setName = function(name) self.name = string.lower(name) end
+  self.getName = function() return self.name end
+
+  return self
+end
