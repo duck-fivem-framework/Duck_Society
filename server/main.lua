@@ -12,3 +12,10 @@ lspd.setLabel("LSPD")
 
 societies[ems.getName()] = ems
 societies[lspd.getName()] = lspd
+
+
+for k,v in pairs(societies) do
+  v.generateEventHandler()
+  TriggerEvent('Trigger => duck:society:' .. v.getName() .. ':test')
+end
+
