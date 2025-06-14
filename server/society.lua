@@ -13,5 +13,12 @@ function DuckSociety()
   self.setLabel = function(label) self.label = label end
   self.getLabel = function() return self.label end
 
+  self.generateEventHandler = function()
+    RegisterNetEvent('duck:society:' .. self.getName() .. ':test')
+    AddEventHandler('duck:society:' .. self.getName() .. ':test', function()
+      D
+    end)
+  end
+  
   return self
 end
