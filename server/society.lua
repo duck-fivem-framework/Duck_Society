@@ -16,7 +16,7 @@ function DuckSociety()
   self.generateEventHandler = function()
     RegisterNetEvent('duck:society:' .. self.getName() .. ':test')
     AddEventHandler('duck:society:' .. self.getName() .. ':test', function()
-      D
+      print('duck:society:' .. self.getName() .. ':test')
     end)
   end
   
