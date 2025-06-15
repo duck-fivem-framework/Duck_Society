@@ -77,5 +77,10 @@ function DuckSocietyMembers()
         return true, 'Society set successfully'
     end
     
+    self.toString = function()
+        return string.format("DuckSocietyMembers: { id: %d, societyId: %d, roleId: %d, playerId: %d }",
+            self.getId(), self.getSocietyId(), self.getRoleId(), self.getPlayerId())
+    end
+
     return self
 end

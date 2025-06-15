@@ -35,5 +35,10 @@ function DuckSocietyRoles()
         end
     end
 
+    self.toString = function()
+        return string.format("DuckSocietyRoles: { id: %d, societyId: %d, name: '%s', label: '%s', salary: %d, isDefault: %s }",
+            self.getId(), self.getSocietyId(), self.getName(), self.getLabel(), self.getSalary(), tostring(self.getIsDefault()))
+    end
+
     return self
 end

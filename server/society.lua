@@ -17,7 +17,17 @@ function DuckSociety()
   self.setLabel = function(label) self.label = label end
   self.getLabel = function() return self.label end
     
-  self.handlerTest = function()       print(self.getFullEventName('test'))	end
+  self.handlerTest = function()
+    print(self.toString())
+    print('----- Roles -----')
+    for _, role in pairs(self.roles) do
+      print(role.toString())
+    end
+    print('----- Members -----')
+    for _, member in pairs(self.members) do
+      print(member.toString())
+    end
+  end
 
   self.generateEventHandler = function()
 
@@ -244,6 +254,11 @@ function DuckSociety()
     print(('Player %d hired in society %s with role %s'):format(playerId, self.getName(), role.getName()))
     return true, 'Player hired successfully'
 
+  end
+
+  self.toString = function()
+    return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d }",
+      self.getId(), self.getName(), self.getLabel(), #self.roles, #self.members)
   end
 
   return self
