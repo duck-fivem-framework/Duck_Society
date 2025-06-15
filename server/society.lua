@@ -78,7 +78,7 @@ function DuckSociety()
       return false, 'Role must be a table'
     end
 
-    if not role.__metas or role.__metas.object ~= 'DuckSocietyRoles' then
+    if not role.__metas or role.__metas.object ~= Config.MagicString.DuckSocietyRoles then
       return false, 'Invalid role object'
     end
 
@@ -178,16 +178,38 @@ function DuckSociety()
     return nil, 'Member not found'
   end
 
-  self.hirePlayer = function(playerId)
-    if type(playerId) ~= 'number' then
-      return false, 'Player ID must be a number'
+  self.checkPlayerCompatibility = function(player)
+    if type(player) ~= 'table' then
+      return false, 'Player must be a table'
     end
-    if playerId <= 0 then
+
+    if not player.__metas or player.__metas.object ~= Config.MagicString.KeyStringPlayer then
+      return false, 'Invalid player object'
+    end
+
+    local playerId = player.getId()
+    if not playerId or type(playerId) ~= 'number' then
       return false, 'Invalid player ID'
     end
+
+    return true, 'Player is compatible with this society'
+  end
+
+  self.hirePlayer = function(player)
+
+    local compatibility, errorMessage = self.checkPlayerCompatibility(player)
+    if not compatibility then
+      return false, errorMessage
+    end
+
+    if player.getSociety() and player.getSociety().getId() == self.getId() then
+      return false, 'Player is already a member of this society'
+    end
+
     if not self.roles or next(self.roles) == nil then
       return false, 'No roles available in this society'
     end
+    
     local role = nil
     for _, r in pairs(self.roles) do
       if r.getIsDefault() then
@@ -199,22 +221,16 @@ function DuckSociety()
       return false, 'No default role available in this society'
     end
 
-    for _, member in pairs(self.members) do
-      if member.getPlayerId() == playerId then
-        return false, 'Player is already a member of this society'
-      end
-    end
-
     local newMember = DuckSocietyMembers()
-    newMember.setSocietyId(self.getId())
-    newMember.setRoleId(role.getId())
-    newMember.setPlayerId(playerId)
+    newMember.setSociety(self.getId())
+    newMember.setRole(role.getId())
+    newMember.setPlayer(player)
     if Config.useDb then
       -- If using database, we need to check if the player is already hired
       local query = [[
         SELECT COUNT(*) as count FROM society_members WHERE society_id = ? AND player_id = ?
       ]]
-      local params = { self.getId(), playerId }
+      local params = { self.getId(), player.getId() }
       local result = MySQL.Sync.fetchScalar(query, params)
       if result and tonumber(result) > 0 then
         return false, 'Player is already hired in this society'
@@ -224,7 +240,7 @@ function DuckSociety()
         INSERT INTO society_members (society_id, role_id, player_id)
         VALUES (?, ?, ?)
       ]]
-      local params = { self.getId(), role.getId(), playerId }
+      local params = { self.getId(), role.getId(), player.getId() }
       local result = MySQL.Sync.execute(query, params)
       if result == 0 then
         return false, 'Failed to hire player in database'
@@ -251,7 +267,11 @@ function DuckSociety()
 
     -- If we reach this point, the player is successfully hired
     -- Trigger an event to notify other parts of the system
-    print(('Player %d hired in society %s with role %s'):format(playerId, self.getName(), role.getName()))
+    print(('Player %d hired in society %s with role %s'):format(player.getId(), self.getName(), role.getName()))
+
+    -- Trigger an event to notify the client
+    TriggerClientEvent(self.getFullEventName('playerHired'), -1, player.getId(), self.getId(), role.getId())
+
     return true, 'Player hired successfully'
 
   end

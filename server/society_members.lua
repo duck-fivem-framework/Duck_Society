@@ -76,6 +76,31 @@ function DuckSocietyMembers()
         self.setSocietyId(society.getId())
         return true, 'Society set successfully'
     end
+
+    self.getPlayer = function()
+        if not self.playerId then
+            print("Error: Player ID is not set")
+            return nil, 'Player ID is not set'
+        end
+
+        local player = players[self.playerId]
+        if not player then
+            print("Error: Player not found")
+            return nil, 'Player not found'
+        end
+
+        return player, 'Player retrieved successfully'
+    end
+
+    self.setPlayer = function(player)
+        if type(player) ~= 'table' or not player.__metas or player.__metas.object ~= Config.MagicString.KeyStringPlayer then
+            print("Error: Invalid player object")
+            return false, 'Invalid player object'
+        end
+
+        self.setPlayerId(player.getId())
+        return true, 'Player set successfully'
+    end
     
     self.toString = function()
         return string.format("DuckSocietyMembers: { id: %d, societyId: %d, roleId: %d, playerId: %d }",

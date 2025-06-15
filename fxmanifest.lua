@@ -18,5 +18,7 @@ server_scripts {
     'server/society_roles.lua',
     'server/society_members.lua',
     'server/society.lua',
+    'server/identity.lua',
+    'server/player.lua',
     'server/main.lua',
 }

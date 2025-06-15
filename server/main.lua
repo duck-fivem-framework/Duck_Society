@@ -3,6 +3,8 @@ local path = GetResourcePath(resource)
 local databaseFile = path.."/shared/database.lua"
 
 societies = {}
+identities = {}
+players = {}
 
 for k,v in pairs(database.societies) do
   local society = DuckSociety()
