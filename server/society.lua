@@ -30,10 +30,8 @@ function DuckSociety()
   end
 
   self.generateEventHandler = function()
-
     RegisterNetEvent(self.getFullEventName('test'))
     AddEventHandler(self.getFullEventName('test'), self.handlerTest)
-  
   end
 
 
@@ -209,7 +207,7 @@ function DuckSociety()
     if not self.roles or next(self.roles) == nil then
       return false, 'No roles available in this society'
     end
-    
+
     local role = nil
     for _, r in pairs(self.roles) do
       if r.getIsDefault() then
@@ -279,6 +277,19 @@ function DuckSociety()
   self.toString = function()
     return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d }",
       self.getId(), self.getName(), self.getLabel(), #self.roles, #self.members)
+  end
+
+  self.serviceCount = function()
+    local count = 0
+    for _, member in pairs(self.members) do
+      if member.getPlayer() ~= nil then
+        local player = member.getPlayer()
+        if player.isOnline() then
+          count = count + 1
+        end
+      end
+    end
+    return count
   end
 
   return self

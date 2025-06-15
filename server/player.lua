@@ -10,6 +10,7 @@ function DuckPlayer()
     self.role = nil
 
     self.money = 0
+    self.online = false
 
     self.setId = function(id) self.id = tonumber(id) end
     self.getId = function() return self.id end
@@ -17,7 +18,9 @@ function DuckPlayer()
     self.getIdentifier = function() return self.identifier end
     self.setMoney = function(money) self.money = tonumber(money) end
     self.getMoney = function() return self.money end
-
+    self.setOnline = function(online) self.online = online end
+    self.isOnline = function() return self.online end
+    
     self.loadFromDatabase = function(data)
         if data then
             self.setId(data.id)
