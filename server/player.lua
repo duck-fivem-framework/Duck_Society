@@ -1,4 +1,4 @@
-function createDuckPlayer()
+function DuckPlayer()
     local self = {}
     self.__metas = { object = Config.MagicString.KeyStringPlayers }
 
@@ -21,8 +21,15 @@ function createDuckPlayer()
     self.loadFromDatabase = function(data)
         if data then
             self.setId(data.id)
-            self.setName(data.name)
             self.setIdentifier(data.identifier)
+            if data.identityId ~= nil then
+                local identity = identities[data.identityId]
+                if identity then
+                    self.setIdentity(identity)
+                else
+                    print("Error: Identity not found for ID " .. tostring(data.identityId))
+                end
+            end
             self.setMoney(data.money or 0) -- Default to 0 if money is not provided
         else
             print("Error: No data provided to load DuckPlayers")
@@ -108,6 +115,14 @@ function createDuckPlayer()
         self.identityId = identity.getId()
         return true, 'Identity set successfully'
     end
+
+    self.toString = function()
+        return string.format("DuckPlayer: { id: %d, identifier: '%s', money: %d, identityId: %s, society: %s, role: %s }",
+            self.getId(), self.getIdentifier(), self.getMoney(),
+            self.identityId and self.getIdentity().getFullName() or 'nil', self.society and self.society.getName() or 'nil',
+            self.role and self.role.getName() or 'nil')
+    end
+    
 
     return self
 end

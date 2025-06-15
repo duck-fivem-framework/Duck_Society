@@ -6,6 +6,17 @@ societies = {}
 identities = {}
 players = {}
 
+for k,v in pairs(database.identities) do
+  local identity = DuckIdentity()
+  identity.loadFromDatabase(v)
+  identities[identity.getId()] = identity
+end
+for k,v in pairs(database.players) do
+  local player = DuckPlayer()
+  player.loadFromDatabase(v)
+  players[player.getId()] = player
+end
+
 for k,v in pairs(database.societies) do
   local society = DuckSociety()
   v.roles = {}
@@ -26,12 +37,20 @@ for k,v in pairs(database.societies) do
   end
   society.loadFromDatabase(v)
   societies[society.getId()] = society
+  for _, member in pairs(society.getMembers()) do
+    local player = players[member.getPlayerId()]
+    if player then
+      player.setSociety(society)
+      player.setRole(member.getRole())
+    else
+      print("Error: Player with ID " .. member.getPlayerId() .. " not found for society " .. society.getName())
+    end
+  end
 end
 
 for k,v in pairs(societies) do
   v.generateEventHandler()
   Wait(1000)
-
 end
 
 for k,v in pairs(societies) do
@@ -39,10 +58,16 @@ for k,v in pairs(societies) do
  	Wait(1000)
 end
 
+for k,v in pairs(players) do
+  print(v.toString())
+  Wait(1000)
+end
 
 function storeDatabase()
   if not Config.useDb then
     local f,m = io.open(databaseFile,"w")
+    local roles = {}
+    local members = {}
     if not f then
       print("FAILED TO SAVE DATABASE: "..tostring(m).."!")
       return
@@ -51,8 +76,16 @@ function storeDatabase()
     f:write("    maxSocityId = " .. database.maxSocityId .. ",\n")
     f:write("    maxMemberId = " .. database.maxMemberId .. ",\n")
     f:write("    maxRoleId = " .. database.maxRoleId .. ",\n")
+    f:write("    maxIdentityId = " .. database.maxIdentityId .. ",\n")
+    f:write("    maxPlayerId = " .. database.maxPlayerId .. ",\n")
     f:write("    societies = {\n")
-    for _,society in ipairs(database.societies) do
+    for _,society in ipairs(societies) do
+      for _,role in ipairs(society.roles) do
+        roles[role.id] = role
+      end
+      for _,member in ipairs(society.members) do
+        members[member.id] = member
+      end
       f:write("        {\n")
       f:write("            id = " .. society.id .. ",\n")
       f:write("            name = \"" .. society.name .. "\",\n")
@@ -61,7 +94,7 @@ function storeDatabase()
     end
     f:write("    },\n")
     f:write("    roles = {\n")
-    for _,role in ipairs(database.roles) do
+    for _,role in roles do
       f:write("        {\n")
       f:write("            id = " .. role.id .. ",\n")
       f:write("            societyId = " .. role.societyId .. ",\n")
@@ -73,7 +106,7 @@ function storeDatabase()
     end
     f:write("    },\n")
     f:write("    members = {\n")
-    for _,member in ipairs(database.members) do
+    for _,member in ipairs(members) do
       f:write("        {\n")
       f:write("            id = " .. member.id .. ",\n")
       f:write("            societyId = " .. member.societyId .. ",\n")
@@ -82,6 +115,25 @@ function storeDatabase()
       f:write("        },\n")
     end
     f:write("    },\n")
+    f:write("    identities = {\n")
+    for _,identity in ipairs(identities) do
+      f:write("        {\n")
+      f:write("            id = " .. identity.id .. ",\n")
+      f:write("            firstname = \"" .. identity.firstname .. "\",\n")
+      f:write("            lastname = \"" .. identity.lastname .. "\",\n")
+      f:write("            dateofbirth = \"" .. identity.dateofbirth .. "\"\n")
+      f:write("        },\n")
+    end
+    f:write("    },\n")
+    f:write("    players = {\n")
+    for _,player in ipairs(players) do
+      f:write("        {\n")
+      f:write("            id = " .. player.id .. ",\n")
+      f:write("            identityId = " .. player.identityId .. ",\n")
+      f:write("            identifier = " .. player.identifier .. ",\n")
+      f:write("            money = " .. player.money .. "\n")
+      f:write("        },\n")
+    end
     f:write("}\n")
     f:close()
     print("Database saved successfully.")

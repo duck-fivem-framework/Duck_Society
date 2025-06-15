@@ -1,4 +1,4 @@
-function createDuckIdentity()
+function DuckIdentity()
     local self = {}
     self.__metas = { object = Config.MagicString.KeyStringIdentity }
 

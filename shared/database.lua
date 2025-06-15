@@ -2,6 +2,8 @@ database = {
     maxSocityId = 2,
     maxMemberId = 4,
     maxRoleId = 5,
+    maxIdentityId = 4,
+    maxPlayerId = 4,
     societies = {
         {
             id = 1,
@@ -61,25 +63,77 @@ database = {
             id = 1,
             societyId = 1,
             roleId = 1,
-            playerId = 12345
+            playerId = 1
         },
         {
             id = 2,
             societyId = 2,
-            roleId = 1,
-            playerId = 67890
+            roleId = 4,
+            playerId = 2
         },
         {
             id = 3,
             societyId = 1,
             roleId = 2,
-            playerId = 54321
+            playerId = 3
         },
         {
             id = 4,
             societyId = 2,
-            roleId = 2,
-            playerId = 98765
+            roleId = 5,
+            playerId = 4
+        }
+    },
+    identities = {
+        {
+            id = 1,
+            firstname = "John",
+            lastname = "Doe",
+            dateofbirth = "1990-01-01",
+        },
+        {
+            id = 2,
+            firstname = "Jane",
+            lastname = "Smith",
+            dateofbirth = "1992-02-02",
+        },
+        {
+            id = 3,
+            firstname = "Mike",
+            lastname = "Johnson",
+            dateofbirth = "1988-03-03",
+        },
+        {
+            id = 4,
+            firstname = "Emily",
+            lastname = "Davis",
+            dateofbirth = "1995-04-04",
+        }
+    },
+    players = {
+        {
+            id = 1,
+            identityId = 1,
+            identifier = "steam:110000000000001",
+            money = 10000,
+        },
+        {
+            id = 2,
+            identityId = 2,
+            identifier = "steam:110000000000002",
+            money = 15000,
+        },
+        {
+            id = 3,
+            identityId = 3,
+            identifier = "steam:110000000000003",
+            money = 20000,
+        },
+        {
+            id = 4,
+            identityId = 4,
+            identifier = "steam:110000000000004",
+            money = 25000,
         }
     }
 

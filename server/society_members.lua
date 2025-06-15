@@ -48,10 +48,10 @@ function DuckSocietyMembers()
             return nil, 'Role ID is not set'
         end
 
-        local role = roles[self.roleId]
-        if not role then
-            print("Error: Role not found")
-            return nil, 'Role not found'
+        for _, role in pairs(societies[self.societyId].getRoles()) do
+            if role.getId() == self.roleId then
+                return role, 'Role retrieved successfully'
+            end
         end
 
         return role, 'Role retrieved successfully'
