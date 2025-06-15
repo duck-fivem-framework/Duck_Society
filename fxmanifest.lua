@@ -14,7 +14,9 @@ client_scripts {
 }
 
 server_scripts {
-    '@oxmysql/lib/MySQL.lua',
+    'shared/database.lua',
+    'server/society_roles.lua',
+    'server/society_members.lua',
     'server/society.lua',
     'server/main.lua',
 }
