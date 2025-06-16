@@ -479,7 +479,7 @@ RegisterCommand("removePromotableRole", function(source, args, rawCommand)
             return
         end
 
-        local oldRole = role.getSociety().getRoleById(oldRoleId)
+        local oldRole = role.getSociety().getRoleById(roleToRemoveId)
 
         if not oldRole then
             print("Old role with ID " .. oldRole .. " not found.")
