@@ -83,6 +83,62 @@ function DuckSocietyRoles()
         return true, 'Player can be promoted to the new role'
     end
 
+    self.canDemotePlayer = function(player, newRole)
+        if not player or type(player) ~= 'table' or not player.__metas or player.__metas.object ~= Config.MagicString.KeyStringPlayers then
+            print("Error: Invalid player provided for demotion")
+            return false, 'Invalid player provided'
+        end
+
+        if not newRole or type(newRole) ~= 'table' or not newRole.__metas or newRole.__metas.object ~= Config.MagicString.KeyStringRoles then
+            print("Error: Invalid role provided for demotion")
+            return false, 'Invalid role provided'
+        end
+
+        if newRole.getSocietyId() ~= self.getSocietyId() then
+            print("Error: Role does not belong to the same society")
+            return false, 'Role does not belong to the same society'
+        end
+
+        local currentRole = nil
+        for _, members in pairs(self.getSociety().getMembers()) do
+            if members.getPlayerId() == player.getId() then
+                currentRole = members.getRole()
+                break
+            end
+        end
+
+        if not currentRole then
+            print("Error: Player does not have a role in this society")
+            return false, 'Player does not have a role in this society'
+        end
+
+        if not self.demotableRoles[currentRole.getId()] then
+            print("Error: Role is not in the demotable roles list")
+            return false, 'Role is not in the demotable roles list'
+        end
+
+        if not self.demotableRoles[newRole.getId()] then
+            print("Error: NewRole is not demotable")
+            return false, 'NewRole is not demotable'
+        end
+
+        if currentRole.getId() == newRole.getId() then
+            print("Error: Player already has this role")
+            return false, 'Player already has this role'
+        end
+
+        if newRole.getSalary() >= currentRole.getSalary() then
+            print("Error: New role must have a lower salary than the current role")
+            return false, 'New role must have a lower salary than the current role'
+        end
+
+        if newRole.getIsDefault() then
+            print("Error: Cannot demote to a default role")
+            return false, 'Cannot demote to a default role'
+        end
+        return true, 'Player can be demoted to the new role'
+    end
+
     self.addPromotableRole = function(role)
         if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
             print("Error: Invalid role provided for promotable roles")
