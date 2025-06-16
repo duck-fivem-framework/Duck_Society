@@ -154,3 +154,11 @@ end
 
 -- source is global here, don't add to function
 AddEventHandler('playerDropped', OnPlayerDropped)
+
+function onRessourceStop(resourceName)
+  if (GetCurrentResourceName() ~= resourceName) then
+    return
+  end
+  storeDatabase()
+end
+AddEventHandler('onResourceStop', onRessourceStop)
