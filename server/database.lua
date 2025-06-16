@@ -77,3 +77,14 @@ function storeDatabase()
     print("Database saved successfully.")
   end
 end
+
+
+RegisterCommand("savedatabase", function(source, args, rawCommand)
+  if source == 0 then
+    storeDatabase()
+  else
+    print("This command can only be used from the server console.")
+  end
+end, false)
+
+Mysql = nil

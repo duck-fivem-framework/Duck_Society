@@ -59,7 +59,7 @@ for k,v in pairs(players) do
   Wait(1000)
 end
 
-local function createPlayerWithInfo(identifier)
+local function createPlayerWithInfo(identifier, name)
     local identity = DuckIdentity()
     database.maxIdentityId = database.maxIdentityId + 1
     identity.setFirstname("Unknown")
@@ -71,7 +71,7 @@ local function createPlayerWithInfo(identifier)
     print(string.format("Created new identity for player %s: %s", name, identity.toString()))
 
     -- Create a new DuckPlayer instance if the player does not exist
-    playerObject = DuckPlayer()
+    local playerObject = DuckPlayer()
     database.maxPlayerId = database.maxPlayerId + 1
 
     playerObject.setId(database.maxPlayerId) -- Assuming getNextId() is a method to get the next available ID
@@ -123,7 +123,7 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     if not playerObject then
         -- Create a new DuckPlayer instance if the player does not exist
 
-        playerObject = createPlayerWithInfo(steamIdentifier)
+        playerObject = createPlayerWithInfo(steamIdentifier, name)
     end
 
     

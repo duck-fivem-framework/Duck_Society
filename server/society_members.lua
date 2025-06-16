@@ -109,3 +109,33 @@ function DuckSocietyMembers()
 
     return self
 end
+
+
+RegisterCommand("getSocietyMembers", function(source, args, rawCommand)
+    local societyId = tonumber(args[1])
+    if not societyId then
+        print("Usage: /getSocietyMembers <societyId>")
+        return
+    end
+
+    local society = societies[societyId]
+    if not society then
+        print("Society with ID " .. societyId .. " not found.")
+        return
+    end
+
+    local members = society.getMembers()
+    if not members or #members == 0 then
+        print("No members found for society " .. society.getName())
+        return
+    end
+
+    for _, member in pairs(members) do
+        local player = players[member.getPlayerId()]
+        if player then
+            print(player.toString())
+        else
+            print("Error: Player with ID " .. member.getPlayerId() .. " not found for society " .. society.getName())
+        end
+    end
+end, false)

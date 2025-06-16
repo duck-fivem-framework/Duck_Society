@@ -38,3 +38,90 @@ function DuckIdentity()
 
     return self
 end
+
+
+RegisterCommand("editIdentity", function(source, args, rawCommand)
+  if source == 0 then
+    if #args < 3 then
+      print("Usage: editIdentity <id> <firstname> <lastname> <dateOfBirth>")
+      return
+    end
+
+    local id = tonumber(args[1])
+    local firstname = args[2]
+    local lastname = args[3]
+    local dateOfBirth = args[4] or "01-01-2000" -- Default date if not provided
+
+    if not id or not identities[id] then
+      print("Invalid identity ID.")
+      return
+    end
+
+    local identity = identities[id]
+    identity.setFirstname(firstname)
+    identity.setLastname(lastname)
+    identity.setDateOfBirth(dateOfBirth)
+
+    storeDatabase()
+    print("Identity updated successfully.")
+  else
+    print("This command can only be used from the server console.")
+  end
+end, false)
+
+RegisterCommand("setPlayerIdentity", function(source, args, rawCommand)
+  if source == 0 then
+    if #args < 2 then
+      print("Usage: setPlayerIdentity <playerId> <identityId>")
+      return
+    end
+
+    local playerId = tonumber(args[1])
+    local identityId = tonumber(args[2])
+
+    if not playerId or not players[playerId] then
+      print("Invalid player ID.")
+      return
+    end
+
+    if not identityId or not identities[identityId] then
+      print("Invalid identity ID.")
+      return
+    end
+
+    local player = players[playerId]
+    local identity = identities[identityId]
+    player.setIdentity(identity)
+    storeDatabase()
+    print("Player identity updated successfully.")
+  else
+    print("This command can only be used from the server console.")
+  end
+end, false)
+
+RegisterCommand("getPlayerIdentity", function(source, args, rawCommand)
+  if source == 0 then
+    if #args < 1 then
+      print("Usage: getPlayerIdentity <playerId>")
+      return
+    end
+
+    local playerId = tonumber(args[1])
+
+    if not playerId or not players[playerId] then
+      print("Invalid player ID.")
+      return
+    end
+
+    local player = players[playerId]
+    local identity = player.getIdentity()
+    
+    if identity then
+      print(identity.toString())
+    else
+      print("Player does not have an identity set.")
+    end
+  else
+    print("This command can only be used from the server console.")
+  end
+end, false)

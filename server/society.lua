@@ -204,12 +204,12 @@ function DuckSociety()
       return false, 'Player is already a member of this society'
     end
 
-    if not self.roles or next(self.roles) == nil then
+    if not self.getRoles() or next(self.getRoles()) == nil then
       return false, 'No roles available in this society'
     end
 
     local role = nil
-    for _, r in pairs(self.roles) do
+    for _, r in pairs(self.getRoles()) do
       if r.getIsDefault() then
         role = r
         break
@@ -276,7 +276,7 @@ function DuckSociety()
 
   self.toString = function()
     return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d }",
-      self.getId(), self.getName(), self.getLabel(), #self.roles, #self.members)
+      self.getId(), self.getName(), self.getLabel(), #self.getRoles(), #self.getMembers())
   end
 
   self.serviceCount = function()
