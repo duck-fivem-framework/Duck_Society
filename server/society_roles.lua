@@ -302,7 +302,7 @@ function LoadSocietiesRolesDatas()
   for k,roleDatas in pairs(Database.roles) do
     local society = Societies[roleDatas.societyId]
     if society then
-      for _, role in pairs(roleDatas.getRoles()) do
+      for _, role in pairs(society.getRoles()) do
         role.loadPermissionFromDatabase(roleDatas)
       end
     else
