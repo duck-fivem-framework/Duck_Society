@@ -59,6 +59,30 @@ for k,v in pairs(players) do
   Wait(1000)
 end
 
+local function createPlayerWithInfo(identifier)
+    local identity = DuckIdentity()
+    database.maxIdentityId = database.maxIdentityId + 1
+    identity.setFirstname("Unknown")
+    identity.setLastname("Unknown")
+    identity.setDateOfBirth(os.date("%Y-%m-%d")) -- Set to current date for simplicity
+    identity.setId(database.maxIdentityId) -- Assuming getNextId() is a method to get the next available ID
+
+    identities[identity.getId()] = identity
+    print(string.format("Created new identity for player %s: %s", name, identity.toString()))
+
+    -- Create a new DuckPlayer instance if the player does not exist
+    playerObject = DuckPlayer()
+    database.maxPlayerId = database.maxPlayerId + 1
+
+    playerObject.setId(database.maxPlayerId) -- Assuming getNextId() is a method to get the next available ID
+    playerObject.setIdentifier(identifier)
+    playerObject.setMoney(0)
+    playerObject.setIdentityId(identity.getId()) -- Set to nil initially
+    players[playerObject.getId()] = playerObject
+
+    return playerObject
+end
+
 local function OnPlayerConnecting(name, setKickReason, deferrals)
     local player = source
     local steamIdentifier
@@ -99,27 +123,7 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     if not playerObject then
         -- Create a new DuckPlayer instance if the player does not exist
 
-        local identity = DuckIdentity()
-        database.maxIdentityId = database.maxIdentityId + 1
-        identity.setFirstname("Unknown")
-        identity.setLastname("Unknown")
-        identity.setDateOfBirth(os.date("%Y-%m-%d")) -- Set to current date for simplicity
-        identity.setId(database.maxIdentityId) -- Assuming getNextId() is a method to get the next available ID
-
-        identities[identity.getId()] = identity
-        print(string.format("Created new identity for player %s: %s", name, identity.toString()))
-
-        -- Create a new DuckPlayer instance if the player does not exist
-        playerObject = DuckPlayer()
-        database.maxPlayerId = database.maxPlayerId + 1
-
-        playerObject.setId(database.maxPlayerId) -- Assuming getNextId() is a method to get the next available ID
-        playerObject.setIdentifier(steamIdentifier)
-        playerObject.setMoney(0)
-        playerObject.setIdentityId(nil) -- Set to nil initially
-        playerObject.setSociety(nil) -- No society initially
-        playerObject.setRole(nil) -- No role initially
-        players[playerObject.getId()] = playerObject
+        playerObject = createPlayerWithInfo(steamIdentifier)
     end
 
     
@@ -128,6 +132,8 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
 
     storeDatabase()
 end
+
+
 
 AddEventHandler("playerConnecting", OnPlayerConnecting)
 
@@ -169,3 +175,37 @@ function onRessourceStop(resourceName)
   storeDatabase()
 end
 AddEventHandler('onResourceStop', onRessourceStop)
+
+
+for _, playerId in ipairs(GetPlayers()) do
+  local name = GetPlayerName(playerId)
+  local steamIdentifier = nil
+  local identifiers = GetPlayerIdentifiers(playerId)
+  for _, v in pairs(identifiers) do
+    if string.find(v, "steam") then
+      steamIdentifier = v
+      break
+    end
+  end
+  if steamIdentifier then
+    local playerObject = nil
+    for _, v in pairs(players) do
+      if v.getIdentifier() == steamIdentifier then
+        playerObject = v
+        break
+      end
+    end
+
+    if not playerObject then
+      playerObject = createPlayerWithInfo(steamIdentifier)
+    end
+
+    playerObject.setOnline(true)
+    playerObject.setSource(playerId) -- Set the source to the player itself
+
+    print(string.format("Player %s with Steam ID %s is online.", name, steamIdentifier))
+  else
+    print(string.format("Player %s does not have a valid Steam ID.", name))
+  end
+  -- ('%s'):format('text') is same as string.format('%s', 'text)
+end
