@@ -33,7 +33,7 @@ function DuckSocietyMembers()
             return nil, 'Society ID is not set'
         end
 
-        local society = societies[self.societyId]
+        local society = Societies[self.societyId]
         if not society then
             print("Error: Society not found")
             return nil, 'Society not found'
@@ -92,7 +92,7 @@ function DuckSocietyMembers()
             return nil, 'Player ID is not set'
         end
 
-        local player = players[self.playerId]
+        local player = Players[self.playerId]
         if not player then
             print("Error: Player not found")
             return nil, 'Player not found'
@@ -127,7 +127,7 @@ RegisterCommand("getSocietyMembers", function(source, args, rawCommand)
         return
     end
 
-    local society = societies[societyId]
+    local society = Societies[societyId]
     if not society then
         print("Society with ID " .. societyId .. " not found.")
         return
@@ -140,7 +140,7 @@ RegisterCommand("getSocietyMembers", function(source, args, rawCommand)
     end
 
     for _, member in pairs(members) do
-        local player = players[member.getPlayerId()]
+        local player = Players[member.getPlayerId()]
         if player then
             print(player.toString())
         else

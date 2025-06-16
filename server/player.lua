@@ -6,8 +6,6 @@ function DuckPlayer()
     self.identifier = nil
 
     self.identityId = nil
-    self.society = nil
-    self.role = nil
 
     self.money = 0
     self.online = false
@@ -32,7 +30,7 @@ function DuckPlayer()
             self.setId(data.id)
             self.setIdentifier(data.identifier)
             if data.identityId ~= nil then
-                local identity = identities[data.identityId]
+                local identity = Identities[data.identityId]
                 if identity then
                     self.setIdentity(identity)
                 else
@@ -46,63 +44,13 @@ function DuckPlayer()
     end
 
 
-    self.getSociety = function()
-        if not self.society then
-            print("Error: Society is not set")
-            return nil, 'Society is not set'
-        end
-
-        return self.society, 'Society retrieved successfully'
-    end
-
-    self.getRole = function()
-        if not self.role then
-            print("Error: Role is not set")
-            return nil, 'Role is not set'
-        end
-
-        return self.role, 'Role retrieved successfully'
-    end
-
-    self.setSociety = function(society)
-        if not society or type(society) ~= 'table' then
-            print("Error: Invalid society provided")
-            return false, 'Invalid society provided'
-        end
-
-        if not society.__metas or society.__metas.object ~= Config.MagicString.KeyStringSociety then
-            return false, 'Invalid role object'
-        end
-
-        self.society = society
-        return true, 'Society set successfully'
-    end
-
-    self.setRole = function(role)
-        if not role or type(role) ~= 'table' then
-            print("Error: Invalid role provided")
-            return false, 'Invalid role provided'
-        end
-
-        if not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
-            return false, 'Invalid role object'
-        end
-
-        if not self.society or (self.society and role.getSocietyId() ~= self.society.getId()) then
-            return false, 'Role does not belong to the player\'s society'
-        end
-
-        self.role = role
-        return true, 'Role set successfully'
-    end
-
     self.getIdentity = function()
         if not self.identityId then
             print("Error: Identity ID is not set")
             return nil, 'Identity ID is not set'
         end
 
-        local identity = identities[self.identityId]
+        local identity = Identities[self.identityId]
         if not identity then
             print("Error: Identity not found")
             return nil, 'Identity not found'
@@ -131,7 +79,6 @@ function DuckPlayer()
             self.identityId and self.getIdentity().getFullName() or 'nil', self.society and self.society.getName() or 'nil',
             self.role and self.role.getName() or 'nil')
     end
-    
 
     return self
 end

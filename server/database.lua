@@ -2,11 +2,9 @@ local resource = GetCurrentResourceName()
 local path = GetResourcePath(resource)
 local databaseFile = path.."/shared/database.lua"
 
-function storeDatabase()
+function StoreDatabase()
   if not Config.useDb then
     local f,m = io.open(databaseFile,"w")
-    local roles = {}
-    local members = {}
     if not f then
       print("FAILED TO SAVE DATABASE: "..tostring(m).."!")
       return
@@ -18,7 +16,7 @@ function storeDatabase()
     f:write("    maxIdentityId = " .. database.maxIdentityId .. ",\n")
     f:write("    maxPlayerId = " .. database.maxPlayerId .. ",\n")
     f:write("    societies = {\n")
-    for _,society in pairs(societies) do
+    for _,society in pairs(Societies) do
       f:write("        {\n")
       f:write("            id = " .. society.getId() .. ",\n")
       f:write("            name = \"" .. society.getName() .. "\",\n")
@@ -27,7 +25,7 @@ function storeDatabase()
     end
     f:write("    },\n")
     f:write("    roles = {\n")
-    for _,society in pairs(societies) do
+    for _,society in pairs(Societies) do
         for _,role in pairs(society.getRoles()) do
             f:write("        {\n")
             f:write("            id = " .. role.getId() .. ",\n")
@@ -41,7 +39,7 @@ function storeDatabase()
     end
     f:write("    },\n")
     f:write("    members = {\n")
-    for _,society in pairs(societies) do
+    for _,society in pairs(Societies) do
         for _,member in pairs(society.getMembers()) do
             f:write("        {\n")
             f:write("            id = " .. member.getId() .. ",\n")
@@ -53,7 +51,7 @@ function storeDatabase()
     end
     f:write("    },\n")
     f:write("    identities = {\n")
-    for _,identity in pairs(identities) do
+    for _,identity in pairs(Identities) do
       f:write("        {\n")
       f:write("            id = " .. identity.getId() .. ",\n")
       f:write("            firstname = \"" .. identity.getFirstname() .. "\",\n")
@@ -63,7 +61,7 @@ function storeDatabase()
     end
     f:write("    },\n")
     f:write("    players = {\n")
-    for _,player in pairs(players) do
+    for _,player in pairs(Players) do
       f:write("        {\n")
       f:write("            id = " .. player.getId() .. ",\n")
       f:write("            identityId = " .. player.getIdentityId() .. ",\n")
@@ -81,7 +79,7 @@ end
 
 RegisterCommand("savedatabase", function(source, args, rawCommand)
   if source == 0 then
-    storeDatabase()
+    StoreDatabase()
   else
     print("This command can only be used from the server console.")
   end

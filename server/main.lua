@@ -1,16 +1,16 @@
-societies = {}
-identities = {}
-players = {}
+Societies = {}
+Identities = {}
+Players = {}
 
 for k,v in pairs(database.identities) do
   local identity = DuckIdentity()
   identity.loadFromDatabase(v)
-  identities[identity.getId()] = identity
+  Identities[identity.getId()] = identity
 end
 for k,v in pairs(database.players) do
   local player = DuckPlayer()
   player.loadFromDatabase(v)
-  players[player.getId()] = player
+  Players[player.getId()] = player
 end
 
 for k,v in pairs(database.societies) do
@@ -32,9 +32,9 @@ for k,v in pairs(database.societies) do
     end
   end
   society.loadFromDatabase(v)
-  societies[society.getId()] = society
+  Societies[society.getId()] = society
   for _, member in pairs(society.getMembers()) do
-    local player = players[member.getPlayerId()]
+    local player = Players[member.getPlayerId()]
     if player then
       player.setSociety(society)
       player.setRole(member.getRole())
@@ -44,17 +44,17 @@ for k,v in pairs(database.societies) do
   end
 end
 
-for k,v in pairs(societies) do
+for k,v in pairs(Societies) do
   v.generateEventHandler()
   Wait(1000)
 end
 
-for k,v in pairs(societies) do
+for k,v in pairs(Societies) do
 	TriggerEvent('duck:society:' .. v.getName() .. ':test')
  	Wait(1000)
 end
 
-for k,v in pairs(players) do
+for k,v in pairs(Players) do
   print(v.toString())
   Wait(1000)
 end
@@ -67,7 +67,7 @@ local function createPlayerWithInfo(identifier, name)
     identity.setDateOfBirth(os.date("%Y-%m-%d")) -- Set to current date for simplicity
     identity.setId(database.maxIdentityId) -- Assuming getNextId() is a method to get the next available ID
 
-    identities[identity.getId()] = identity
+    Identities[identity.getId()] = identity
     print(string.format("Created new identity for player %s: %s", name, identity.toString()))
 
     -- Create a new DuckPlayer instance if the player does not exist
@@ -78,7 +78,7 @@ local function createPlayerWithInfo(identifier, name)
     playerObject.setIdentifier(identifier)
     playerObject.setMoney(0)
     playerObject.setIdentityId(identity.getId()) -- Set to nil initially
-    players[playerObject.getId()] = playerObject
+    Players[playerObject.getId()] = playerObject
 
     return playerObject
 end
@@ -113,7 +113,7 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     -- Log the player connection
     print(string.format("Player %s with Steam ID %s is connecting.", name, steamIdentifier))
     local playerObject = nil
-    for _, v in pairs(players) do
+    for _, v in pairs(Players) do
         if v.getIdentifier() == steamIdentifier then
             playerObject = v
             break
@@ -130,7 +130,7 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     playerObject.setOnline(true)
     playerObject.setSource(player) -- Set the source to the player itself
 
-    storeDatabase()
+    StoreDatabase()
 end
 
 
@@ -143,7 +143,7 @@ function OnPlayerDropped(reason, resourceName, clientDropReason)
     for _, v in pairs(GetPlayerIdentifiers(player)) do
         if string.find(v, "steam") then
             local steamIdentifier = v
-            for _, p in pairs(players) do
+            for _, p in pairs(Players) do
                 if p.getIdentifier() == steamIdentifier then
                     playerObject = p
                     break
@@ -162,7 +162,7 @@ function OnPlayerDropped(reason, resourceName, clientDropReason)
         print(string.format("Player with ID %d has dropped but was not found in the players table.", player))
     end
 
-    storeDatabase()
+    StoreDatabase()
 end
 
 -- source is global here, don't add to function
@@ -172,7 +172,7 @@ function onRessourceStop(resourceName)
   if (GetCurrentResourceName() ~= resourceName) then
     return
   end
-  storeDatabase()
+  StoreDatabase()
 end
 AddEventHandler('onResourceStop', onRessourceStop)
 
@@ -189,7 +189,7 @@ for _, playerId in ipairs(GetPlayers()) do
   end
   if steamIdentifier then
     local playerObject = nil
-    for _, v in pairs(players) do
+    for _, v in pairs(Players) do
       if v.getIdentifier() == steamIdentifier then
         playerObject = v
         break
