@@ -8,6 +8,8 @@ function DuckSocietyRoles()
     self.label = nil
     self.salary = 0
     self.isDefault = false
+    self.promotableRoles = {}
+    self.demotableRoles = {}
 
     self.setId = function(id) self.id = tonumber(id) end
     self.getId = function() return self.id end
@@ -21,6 +23,80 @@ function DuckSocietyRoles()
     self.getSalary = function() return self.salary end
     self.setIsDefault = function(isDefault) self.isDefault = isDefault end
     self.getIsDefault = function() return self.isDefault end
+    self.getPromotableRoles = function() return self.promotableRoles end
+    self.getDemotableRoles = function() return self.demotableRoles end
+
+    self.addPromotableRole = function(role)
+        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
+            print("Error: Invalid role provided for promotable roles")
+            return false, 'Invalid role provided'
+        end
+
+        if role.getId() == self.getId() then
+            print("Error: Cannot add the same role to promotable roles")
+            return false, 'Cannot add the same role to promotable roles'
+        end
+
+        if role.getSocietyId() ~= self.getSocietyId() then
+            print("Error: Role does not belong to the same society")
+            return false, 'Role does not belong to the same society'
+        end
+
+        self.promotableRoles[role.getId()] = role
+
+        return true, 'Role added to promotable roles'
+    end
+
+    self.removePromotableRole = function(roleId)
+        if not roleId or type(roleId) ~= 'number' then
+            print("Error: Invalid role ID provided for removal from promotable roles")
+            return false, 'Invalid role ID provided'
+        end
+
+        if not self.promotableRoles[roleId] then
+            print("Error: Role ID not found in promotable roles")
+            return false, 'Role ID not found in promotable roles'
+        end
+
+        self.promotableRoles[roleId] = nil
+        return true, 'Role removed from promotable roles'
+    end
+
+    self.addDemotableRole = function(role)
+        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
+            print("Error: Invalid role provided for demotable roles")
+            return false, 'Invalid role provided'
+        end
+
+        if role.getId() == self.getId() then
+            print("Error: Cannot add the same role to demotable roles")
+            return false, 'Cannot add the same role to demotable roles'
+        end
+
+        if role.getSocietyId() ~= self.getSocietyId() then
+            print("Error: Role does not belong to the same society")
+            return false, 'Role does not belong to the same society'
+        end
+
+        self.demotableRoles[role.getId()] = role
+
+        return true, 'Role added to demotable roles'
+    end
+
+    self.removeDemotableRole = function(roleId)
+        if not roleId or type(roleId) ~= 'number' then
+            print("Error: Invalid role ID provided for removal from demotable roles")
+            return false, 'Invalid role ID provided'
+        end
+
+        if not self.demotableRoles[roleId] then
+            print("Error: Role ID not found in demotable roles")
+            return false, 'Role ID not found in demotable roles'
+        end
+
+        self.demotableRoles[roleId] = nil
+        return true, 'Role removed from demotable roles'
+    end
 
     self.loadFromDatabase = function(data)
         if data then
