@@ -1,4 +1,4 @@
-database = {
+Database = {
     maxSocityId = 2,
     maxMemberId = 4,
     maxRoleId = 5,

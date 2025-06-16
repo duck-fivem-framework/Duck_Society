@@ -228,8 +228,8 @@ function DuckSociety()
     newMember.setSociety(self)
     newMember.setRole(role)
     newMember.setPlayer(player)
-    database.maxMemberId = database.maxMemberId + 1
-    newMember.setId(database.maxMemberId) -- Simple ID generation, could be improved
+    Database.maxMemberId = Database.maxMemberId + 1
+    newMember.setId(Database.maxMemberId) -- Simple ID generation, could be improved
     
     local success, message = self.addMember(newMember)
     if not success then
@@ -246,6 +246,32 @@ function DuckSociety()
 
     return true, 'Player hired successfully'
 
+  end
+
+  self.firePlayer = function(player)
+    local compatibility, errorMessage = self.checkPlayerCompatibility(player)
+    if not compatibility then
+      return false, errorMessage
+    end
+
+    local member, message = self.getMemberByPlayerId(player.getId())
+    if not member then
+      return false, message
+    end
+
+    local success, message = self.removeMember(member)
+    if not success then
+      return false, message
+    end
+
+    -- Trigger an event to notify other parts of the system
+    print(('Player %d fired from society %s'):format(player.getId(), self.getName()))
+
+    if player.isOnline() then
+      TriggerClientEvent(self.getFullEventName('playerFired'), player.getSource(), player.getId(), self.getId())
+    end
+
+    return true, 'Player fired successfully'
   end
 
   self.toString = function()
