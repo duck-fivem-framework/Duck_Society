@@ -181,8 +181,12 @@ function DuckSociety()
       return false, 'Player must be a table'
     end
 
-    if not player.__metas or player.__metas.object ~= Config.MagicString.KeyStringPlayer then
-      return false, 'Invalid player object'
+    if not player.__metas then
+      return false, 'Invalid player metas'
+    end
+
+    if player.__metas.object ~= Config.MagicString.KeyStringPlayers then
+      return false, 'Invalid player object validation'
     end
 
     local playerId = player.getId()
@@ -194,7 +198,6 @@ function DuckSociety()
   end
 
   self.hirePlayer = function(player)
-
     local compatibility, errorMessage = self.checkPlayerCompatibility(player)
     if not compatibility then
       return false, errorMessage
@@ -216,43 +219,11 @@ function DuckSociety()
     end
 
     local newMember = DuckSocietyMembers()
-    newMember.setSociety(self.getId())
-    newMember.setRole(role.getId())
+    newMember.setSociety(self)
+    newMember.setRole(role)
     newMember.setPlayer(player)
-    if Config.useDb then
-      -- If using database, we need to check if the player is already hired
-      local query = [[
-        SELECT COUNT(*) as count FROM society_members WHERE society_id = ? AND player_id = ?
-      ]]
-      local params = { self.getId(), player.getId() }
-      local result = MySQL.Sync.fetchScalar(query, params)
-      if result and tonumber(result) > 0 then
-        return false, 'Player is already hired in this society'
-      end
-      -- First create in database
-      local query = [[
-        INSERT INTO society_members (society_id, role_id, player_id)
-        VALUES (?, ?, ?)
-      ]]
-      local params = { self.getId(), role.getId(), player.getId() }
-      local result = MySQL.Sync.execute(query, params)
-      if result == 0 then
-        return false, 'Failed to hire player in database'
-      end
-
-      -- need to retrieve the new member ID
-      local newMemberId = MySQL.Sync.fetchScalar('SELECT LAST_INSERT_ID()')
-      if not newMemberId then
-        return false, 'Failed to retrieve new member ID'
-      end
-
-      newMember.setId(newMemberId)
-    else
-      database.maxMemberId = database.maxMemberId + 1
-      -- If not using database, we can create the member directly
-      newMember.setId(database.maxMemberId) -- Simple ID generation, could be improved
-
-    end
+    database.maxMemberId = database.maxMemberId + 1
+    newMember.setId(database.maxMemberId) -- Simple ID generation, could be improved
     
     local success, message = self.addMember(newMember)
     if not success then
@@ -263,16 +234,17 @@ function DuckSociety()
     -- Trigger an event to notify other parts of the system
     print(('Player %d hired in society %s with role %s'):format(player.getId(), self.getName(), role.getName()))
 
-    -- Trigger an event to notify the client
-    TriggerClientEvent(self.getFullEventName('playerHired'), -1, player.getId(), self.getId(), role.getId())
+    if player.isOnline() then
+      TriggerClientEvent(self.getFullEventName('playerHired'), player.getSource(), player.getId(), self.getId(), role.getId())
+    end
 
     return true, 'Player hired successfully'
 
   end
 
   self.toString = function()
-    return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d }",
-      self.getId(), self.getName(), self.getLabel(), #self.getRoles(), #self.getMembers())
+    return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d, serviceCount: %d }",
+      self.getId(), self.getName(), self.getLabel(), #self.getRoles(), #self.getMembers(), self.serviceCount())
   end
 
   self.serviceCount = function()
@@ -290,3 +262,28 @@ function DuckSociety()
 
   return self
 end
+
+
+RegisterCommand("getSocietyStatus", function(source, args, rawCommand)
+    local societyId = tonumber(args[1])
+    if not societyId then
+        print("Usage: /getSocietyStatus <societyId>")
+        return
+    end
+
+    local society = Societies[societyId]
+    if not society then
+        print("Society with ID " .. societyId .. " not found.")
+        return
+    end
+
+    print(society.toString())
+    print('----- Roles -----')
+    for _, role in pairs(society.getRoles()) do
+        print(role.toString())
+    end
+    print('----- Members -----')
+    for _, member in pairs(society.getMembers()) do
+        print(member.toString())
+    end
+end, false)

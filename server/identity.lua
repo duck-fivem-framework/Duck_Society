@@ -52,17 +52,17 @@ RegisterCommand("editIdentity", function(source, args, rawCommand)
     local lastname = args[3]
     local dateOfBirth = args[4] or "01-01-2000" -- Default date if not provided
 
-    if not id or not identities[id] then
+    if not id or not Identities[id] then
       print("Invalid identity ID.")
       return
     end
 
-    local identity = identities[id]
+    local identity = Identities[id]
     identity.setFirstname(firstname)
     identity.setLastname(lastname)
     identity.setDateOfBirth(dateOfBirth)
 
-    storeDatabase()
+    StoreDatabase()
     print("Identity updated successfully.")
   else
     print("This command can only be used from the server console.")
@@ -79,20 +79,20 @@ RegisterCommand("setPlayerIdentity", function(source, args, rawCommand)
     local playerId = tonumber(args[1])
     local identityId = tonumber(args[2])
 
-    if not playerId or not players[playerId] then
+    if not playerId or not Players[playerId] then
       print("Invalid player ID.")
       return
     end
 
-    if not identityId or not identities[identityId] then
+    if not identityId or not Identities[identityId] then
       print("Invalid identity ID.")
       return
     end
 
-    local player = players[playerId]
-    local identity = identities[identityId]
+    local player = Players[playerId]
+    local identity = Identities[identityId]
     player.setIdentity(identity)
-    storeDatabase()
+    StoreDatabase()
     print("Player identity updated successfully.")
   else
     print("This command can only be used from the server console.")
@@ -108,12 +108,12 @@ RegisterCommand("getPlayerIdentity", function(source, args, rawCommand)
 
     local playerId = tonumber(args[1])
 
-    if not playerId or not players[playerId] then
+    if not playerId or not Players[playerId] then
       print("Invalid player ID.")
       return
     end
 
-    local player = players[playerId]
+    local player = Players[playerId]
     local identity = player.getIdentity()
     
     if identity then

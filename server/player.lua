@@ -74,10 +74,9 @@ function DuckPlayer()
     end
 
     self.toString = function()
-        return string.format("DuckPlayer: { id: %d, identifier: '%s', money: %d, identityId: %s, society: %s, role: %s }",
+        return string.format("DuckPlayer: { id: %d, identifier: '%s', money: %d, identity: %s}",
             self.getId(), self.getIdentifier(), self.getMoney(),
-            self.identityId and self.getIdentity().getFullName() or 'nil', self.society and self.society.getName() or 'nil',
-            self.role and self.role.getName() or 'nil')
+            self.identityId and self.getIdentity().getFullName() or 'nil')
     end
 
     return self
