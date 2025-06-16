@@ -136,7 +136,13 @@ function OnPlayerDropped(reason, resourceName, clientDropReason)
     local playerObject = nil
     for _, v in pairs(GetPlayerIdentifiers(player)) do
         if string.find(v, "steam") then
-            playerObject = v
+            local steamIdentifier = v
+            for _, p in pairs(players) do
+                if p.getIdentifier() == steamIdentifier then
+                    playerObject = p
+                    break
+                end
+            end
             break
         end
     end
