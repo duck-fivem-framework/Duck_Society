@@ -33,15 +33,6 @@ for k,v in pairs(database.societies) do
   end
   society.loadFromDatabase(v)
   Societies[society.getId()] = society
-  for _, member in pairs(society.getMembers()) do
-    local player = Players[member.getPlayerId()]
-    if player then
-      player.setSociety(society)
-      player.setRole(member.getRole())
-    else
-      print("Error: Player with ID " .. member.getPlayerId() .. " not found for society " .. society.getName())
-    end
-  end
 end
 
 for k,v in pairs(Societies) do
