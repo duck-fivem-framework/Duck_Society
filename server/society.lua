@@ -200,10 +200,6 @@ function DuckSociety()
       return false, errorMessage
     end
 
-    if player.getSociety() and player.getSociety().getId() == self.getId() then
-      return false, 'Player is already a member of this society'
-    end
-
     if not self.getRoles() or next(self.getRoles()) == nil then
       return false, 'No roles available in this society'
     end
@@ -225,7 +221,6 @@ function DuckSociety()
     newMember.setPlayer(player)
     if Config.useDb then
       -- If using database, we need to check if the player is already hired
-      
       local query = [[
         SELECT COUNT(*) as count FROM society_members WHERE society_id = ? AND player_id = ?
       ]]
