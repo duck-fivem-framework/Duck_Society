@@ -113,7 +113,7 @@ function DuckSociety()
 
     return role, 'Role retrieved successfully'
   end
-  
+
 
   self.checkMemberCompatibility = function(member)
     if type(member) ~= 'table' then
@@ -374,6 +374,11 @@ function DuckSociety()
     end
 
     return true, 'Player demoted successfully'
+  end
+
+  self.toString = function()
+    return string.format("DuckSociety: { id: %d, name: '%s', label: '%s' }",
+      self.getId(), self.getName(), self.getLabel())
   end
 
   return self
