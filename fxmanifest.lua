@@ -15,6 +15,7 @@ client_scripts {
 
 server_scripts {
     'shared/database.lua',
+    'server/database.lua',
     'server/society_roles.lua',
     'server/society_members.lua',
     'server/society.lua',

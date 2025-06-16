@@ -63,79 +63,94 @@ for k,v in pairs(players) do
   Wait(1000)
 end
 
-function storeDatabase()
-  if not Config.useDb then
-    local f,m = io.open(databaseFile,"w")
-    local roles = {}
-    local members = {}
-    if not f then
-      print("FAILED TO SAVE DATABASE: "..tostring(m).."!")
-      return
+local function OnPlayerConnecting(name, setKickReason, deferrals)
+    local player = source
+    local steamIdentifier
+    local identifiers = GetPlayerIdentifiers(player)
+    deferrals.defer()
+
+    -- mandatory wait!
+    Wait(0)
+
+    deferrals.update(string.format("Hello %s. Your Steam ID is being checked.", name))
+
+    for _, v in pairs(identifiers) do
+        if string.find(v, "steam") then
+            steamIdentifier = v
+            break
+        end
     end
-    f:write("database = {\n")
-    f:write("    maxSocityId = " .. database.maxSocityId .. ",\n")
-    f:write("    maxMemberId = " .. database.maxMemberId .. ",\n")
-    f:write("    maxRoleId = " .. database.maxRoleId .. ",\n")
-    f:write("    maxIdentityId = " .. database.maxIdentityId .. ",\n")
-    f:write("    maxPlayerId = " .. database.maxPlayerId .. ",\n")
-    f:write("    societies = {\n")
-    for _,society in ipairs(societies) do
-      for _,role in ipairs(society.roles) do
-        roles[role.id] = role
-      end
-      for _,member in ipairs(society.members) do
-        members[member.id] = member
-      end
-      f:write("        {\n")
-      f:write("            id = " .. society.id .. ",\n")
-      f:write("            name = \"" .. society.name .. "\",\n")
-      f:write("            label = \"" .. society.label .. "\",\n")
-      f:write("        },\n")
+
+    -- mandatory wait!
+    Wait(0)
+
+    if not steamIdentifier then
+        deferrals.done("You are not connected to Steam.")
+    else
+        deferrals.done()
     end
-    f:write("    },\n")
-    f:write("    roles = {\n")
-    for _,role in roles do
-      f:write("        {\n")
-      f:write("            id = " .. role.id .. ",\n")
-      f:write("            societyId = " .. role.societyId .. ",\n")
-      f:write("            name = \"" .. role.name .. "\",\n")
-      f:write("            label = \"" .. role.label .. "\",\n")
-      f:write("            salary = " .. role.salary .. ",\n")
-      f:write("            isDefault = " .. tostring(role.isDefault) .. "\n")
-      f:write("        },\n")
+
+    -- Log the player connection
+    print(string.format("Player %s with Steam ID %s is connecting.", name, steamIdentifier))
+    local playerObject = nil
+    for _, v in pairs(players) do
+        if v.getIdentifier() == steamIdentifier then
+            playerObject = v
+            break
+        end
     end
-    f:write("    },\n")
-    f:write("    members = {\n")
-    for _,member in ipairs(members) do
-      f:write("        {\n")
-      f:write("            id = " .. member.id .. ",\n")
-      f:write("            societyId = " .. member.societyId .. ",\n")
-      f:write("            roleId = " .. member.roleId .. ",\n")
-      f:write("            playerId = " .. member.playerId .. "\n")
-      f:write("        },\n")
+
+    if not playerObject then
+        local identity = DuckIdentity()
+        database.maxIdentityId = database.maxIdentityId + 1
+        identity.setFirstname("Unknown")
+        identity.setLastname("Unknown")
+        identity.setDateOfBirth(os.date("%Y-%m-%d")) -- Set to current date for simplicity
+        identity.setId(database.maxIdentityId) -- Assuming getNextId() is a method to get the next available ID
+
+        -- Create a new DuckPlayer instance if the player does not exist
+        playerObject = DuckPlayer()
+        database.maxPlayerId = database.maxPlayerId + 1
+
+        playerObject.setId(database.maxPlayerId) -- Assuming getNextId() is a method to get the next available ID
+        playerObject.setIdentifier(steamIdentifier)
+        playerObject.setMoney(0)
+        playerObject.setIdentityId(nil) -- Set to nil initially
+        playerObject.setSociety(nil) -- No society initially
+        playerObject.setRole(nil) -- No role initially
+        players[playerObject.getId()] = playerObject
     end
-    f:write("    },\n")
-    f:write("    identities = {\n")
-    for _,identity in ipairs(identities) do
-      f:write("        {\n")
-      f:write("            id = " .. identity.id .. ",\n")
-      f:write("            firstname = \"" .. identity.firstname .. "\",\n")
-      f:write("            lastname = \"" .. identity.lastname .. "\",\n")
-      f:write("            dateofbirth = \"" .. identity.dateofbirth .. "\"\n")
-      f:write("        },\n")
-    end
-    f:write("    },\n")
-    f:write("    players = {\n")
-    for _,player in ipairs(players) do
-      f:write("        {\n")
-      f:write("            id = " .. player.id .. ",\n")
-      f:write("            identityId = " .. player.identityId .. ",\n")
-      f:write("            identifier = " .. player.identifier .. ",\n")
-      f:write("            money = " .. player.money .. "\n")
-      f:write("        },\n")
-    end
-    f:write("}\n")
-    f:close()
-    print("Database saved successfully.")
-  end
+
+    
+    playerObject.setOnline(true)
+    playerObject.setSource(player) -- Set the source to the player itself
+
+    storeDatabase()
 end
+
+AddEventHandler("playerConnecting", OnPlayerConnecting)
+
+function OnPlayerDropped(reason, resourceName, clientDropReason)
+    local player = source
+    local playerObject = nil
+    for _, v in pairs(GetPlayerIdentifiers(player)) do
+        if string.find(v, "steam") then
+            playerObject = v
+            break
+        end
+    end
+
+    if playerObject then
+        playerObject.setOnline(false)
+        playerObject.setSource(nil) -- Clear the source when the player drops
+        print(string.format("Player %s with ID %d has dropped. Reason: %s, Resource: %s, Client Drop Reason: %s",
+            playerObject.getIdentifier(), playerObject.getId(), reason, resourceName, clientDropReason))
+    else
+        print(string.format("Player with ID %d has dropped but was not found in the players table.", player))
+    end
+
+    storeDatabase()
+end
+
+-- source is global here, don't add to function
+AddEventHandler('playerDropped', OnPlayerDropped)

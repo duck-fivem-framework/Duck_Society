@@ -11,6 +11,7 @@ function DuckPlayer()
 
     self.money = 0
     self.online = false
+    self.source = nil -- This will hold the source of the player, if applicable
 
     self.setId = function(id) self.id = tonumber(id) end
     self.getId = function() return self.id end
@@ -20,6 +21,9 @@ function DuckPlayer()
     self.getMoney = function() return self.money end
     self.setOnline = function(online) self.online = online end
     self.isOnline = function() return self.online end
+    self.setSource = function(source) self.source = source end
+    self.getSource = function() return self.source end
+
     
     self.loadFromDatabase = function(data)
         if data then
