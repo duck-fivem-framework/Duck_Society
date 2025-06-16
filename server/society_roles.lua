@@ -160,18 +160,29 @@ function DuckSocietyRoles()
         return true, 'Role added to promotable roles'
     end
 
-    self.removePromotableRole = function(roleId)
-        if not roleId or type(roleId) ~= 'number' then
-            print("Error: Invalid role ID provided for removal from promotable roles")
-            return false, 'Invalid role ID provided'
+    self.removePromotableRole = function(role)
+        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
+            print("Error: Invalid role provided for promotable roles")
+            return false, 'Invalid role provided'
         end
 
-        if not self.promotableRoles[roleId] then
+        if role.getId() == self.getId() then
+            print("Error: Cannot add the same role to promotable roles")
+            return false, 'Cannot add the same role to promotable roles'
+        end
+
+        if role.getSocietyId() ~= self.getSocietyId() then
+            print("Error: Role does not belong to the same society")
+            return false, 'Role does not belong to the same society'
+        end
+
+        if not self.promotableRoles[role.getId()] then
             print("Error: Role ID not found in promotable roles")
             return false, 'Role ID not found in promotable roles'
         end
 
-        self.promotableRoles[roleId] = nil
+
+        self.promotableRoles[role.getId()] = nil
         return true, 'Role removed from promotable roles'
     end
 
@@ -222,6 +233,34 @@ function DuckSocietyRoles()
 
         else
             print("Error: No data provided to load DuckSocietyRoles")
+        end
+    end
+
+    self.loadPermissionFromDatabase = function(data)
+        if data then
+            if data.promotableRoles then
+                for _, roleId in pairs(data.promotableRoles) do
+                    local role = Societies[self.getSocietyId()].getRoleById(roleId)
+                    if role then
+                        self.addPromotableRole(role)
+                    else
+                        print("Error: Promotable role with ID " .. roleId .. " not found")
+                    end
+                end
+            end
+
+            if data.demotableRoles then
+                for _, roleId in pairs(data.demotableRoles) do
+                    local role = Societies[self.getSocietyId()].getRoleById(roleId)
+                    if role then
+                        self.addDemotableRole(role)
+                    else
+                        print("Error: Demotable role with ID " .. roleId .. " not found")
+                    end
+                end
+            end
+        else
+            print("Error: No data provided to load permissions for DuckSocietyRoles")
         end
     end
 
@@ -352,6 +391,112 @@ RegisterCommand("editRoleLabel", function(source, args, rawCommand)
 
         role.setLabel(newLabel)
         print("Role label updated successfully: " .. role.toString())
+    else
+        print("This command can only be used from the server console.")
+    end
+end, false)
+
+RegisterCommand("addNewPromotableRole", function(source, args, rawCommand)
+    if source == 0 then
+        if #args < 2 then
+            print("Usage: addNewPromotableRole <roleId> <newRoleId>")
+            return
+        end
+
+        local roleId = tonumber(args[1])
+        local newRoleId = tonumber(args[2])
+
+        if not roleId or not newRoleId then
+            print("Invalid role ID or new role ID.")
+            return
+        end
+        
+        local role = nil
+        for k,v in pairs(Societies) do
+            for kk,vv in pairs(v.getRoles()) do
+                if vv.getId() == roleId then
+                    role = vv
+                    break
+                end
+            end
+        end
+
+        if not role then
+            print("Role with ID " .. roleId .. " not found.")
+            return
+        end
+
+        local newRole = role.getSociety().getRoleById(newRoleId)
+
+        if not newRole then
+            print("New role with ID " .. newRoleId .. " not found.")
+            return
+        end
+
+        if newRole.getSociety().getId() ~= role.getSociety().getId() then
+            print("New role does not belong to the same society as the original role.")
+            return
+        end
+
+        local success, message = role.addPromotableRole(newRole)
+        if success then
+            print("New promotable role added successfully: " .. newRole.toString())
+        else
+            print("Error adding promotable role: " .. message)
+        end
+    else
+        print("This command can only be used from the server console.")
+    end
+end, false)
+
+RegisterCommand("removePromotableRole", function(source, args, rawCommand)
+    if source == 0 then
+        if #args < 2 then
+            print("Usage: removePromotableRole <roleId> <roleToRemoveId>")
+            return
+        end
+
+        local roleId = tonumber(args[1])
+        local roleToRemoveId = tonumber(args[2])
+
+        if not roleId or not roleToRemoveId then
+            print("Invalid role ID or role to remove ID.")
+            return
+        end
+        
+        local role = nil
+        for k,v in pairs(Societies) do
+            for kk,vv in pairs(v.getRoles()) do
+                if vv.getId() == roleId then
+                    role = vv
+                    break
+                end
+            end
+        end
+
+        if not role then
+            print("Role with ID " .. roleId .. " not found.")
+            return
+        end
+
+        local oldRole = role.getSociety().getRoleById(oldRoleId)
+
+        if not oldRole then
+            print("Old role with ID " .. oldRole .. " not found.")
+            return
+        end
+
+        if oldRole.getSociety().getId() ~= role.getSociety().getId() then
+            print("New role does not belong to the same society as the original role.")
+            return
+        end
+
+        local success, message = role.removePromotableRole(oldRole)
+        if success then
+            print("Promotable role removed successfully.")
+        else
+            print("Error removing promotable role: " .. message)
+        end
     else
         print("This command can only be used from the server console.")
     end

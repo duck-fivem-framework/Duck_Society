@@ -101,6 +101,20 @@ function DuckSociety()
     return true, 'Role removed successfully'
   end
 
+  self.getRoleById = function(roleId)
+    if not roleId or type(roleId) ~= 'number' then
+      return nil, 'Invalid role ID'
+    end
+
+    local role = self.roles[roleId]
+    if not role then
+      return nil, 'Role not found'
+    end
+
+    return role, 'Role retrieved successfully'
+  end
+  
+
   self.checkMemberCompatibility = function(member)
     if type(member) ~= 'table' then
       return false, 'Member must be a table'
