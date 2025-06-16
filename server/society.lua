@@ -48,24 +48,6 @@ function DuckSociety()
       self.setId(data.id)
       self.setName(data.name)
       self.setLabel(data.label)
-      if data.roles and type(data.roles) == 'table' then
-        for _, roleData in pairs(data.roles) do
-          local role = DuckSocietyRoles()
-          role.loadFromDatabase(roleData)
-          self.roles[role.getId()] = role
-        end
-      else
-        print("Error: Invalid roles data provided to load DuckSociety")
-      end
-      if data.members and type(data.members) == 'table' then
-        for _, memberData in pairs(data.members) do
-          local member = DuckSocietyMembers()
-          member.loadFromDatabase(memberData)
-          self.members[member.getId()] = member
-        end
-      else
-        print("Error: Invalid members data provided to load DuckSociety")
-      end
     else
       print("Error: No data provided to load DuckSociety")
     end
@@ -383,6 +365,13 @@ function DuckSociety()
   return self
 end
 
+function LoadSocieties()
+  for k,v in pairs(Database.societies) do
+    local society = DuckSociety()
+    society.loadFromDatabase(v)
+    Societies[society.getId()] = society
+  end
+end
 
 RegisterCommand("getSocietyStatus", function(source, args, rawCommand)
     local societyId = tonumber(args[1])

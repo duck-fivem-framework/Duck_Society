@@ -81,3 +81,11 @@ function DuckPlayer()
 
     return self
 end
+
+function LoadPlayers()
+    for k,v in pairs(Database.players) do
+        local player = DuckPlayer()
+        player.loadFromDatabase(v)
+        Players[player.getId()] = player
+    end
+end

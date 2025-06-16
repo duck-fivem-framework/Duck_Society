@@ -119,6 +119,17 @@ function DuckSocietyMembers()
     return self
 end
 
+function LoadSocietiesMembers()
+    for k,v in pairs(Database.members) do
+        local member = DuckSocietyMembers()
+        member.loadFromDatabase(v)
+        if Societies[member.getSocietyId()] then
+            Societies[member.getSocietyId()].addMember(member)
+        else
+            print("Error: Society with ID " .. member.getSocietyId() .. " not found for member " .. member.getId())
+        end
+    end
+end
 
 RegisterCommand("getSocietyMembers", function(source, args, rawCommand)
     local societyId = tonumber(args[1])

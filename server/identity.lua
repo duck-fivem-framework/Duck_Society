@@ -39,6 +39,13 @@ function DuckIdentity()
     return self
 end
 
+function LoadIdentities()
+  for k,v in pairs(Database.identities) do
+    local identity = DuckIdentity()
+    identity.loadFromDatabase(v)
+    Identities[identity.getId()] = identity
+  end
+end
 
 RegisterCommand("editIdentity", function(source, args, rawCommand)
   if source == 0 then

@@ -219,6 +219,7 @@ function DuckSocietyRoles()
             self.setLabel(data.label)
             self.setSalary(data.salary)
             self.setIsDefault(data.isDefault)
+
         else
             print("Error: No data provided to load DuckSocietyRoles")
         end
@@ -244,6 +245,18 @@ function DuckSocietyRoles()
     end
 
     return self
+end
+
+function LoadSocietiesRoles()
+  for k,v in pairs(Database.roles) do
+    local role = DuckSocietyRoles()
+    role.loadFromDatabase(v)
+    if Societies[role.getSocietyId()] then
+      Societies[role.getSocietyId()].addRole(role)
+    else
+      print("Error: Society with ID " .. role.getSocietyId() .. " not found for role " .. role.getName())
+    end
+  end
 end
 
 RegisterCommand("editRoleSalary", function(source, args, rawCommand)

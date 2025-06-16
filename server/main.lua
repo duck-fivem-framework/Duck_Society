@@ -2,38 +2,13 @@ Societies = {}
 Identities = {}
 Players = {}
 
-for k,v in pairs(Database.identities) do
-  local identity = DuckIdentity()
-  identity.loadFromDatabase(v)
-  Identities[identity.getId()] = identity
-end
-for k,v in pairs(Database.players) do
-  local player = DuckPlayer()
-  player.loadFromDatabase(v)
-  Players[player.getId()] = player
-end
+LoadIdentities()
+LoadPlayers()
+LoadSocieties()
+LoadSocietiesRoles()
+LoadSocietiesMembers()
 
-for k,v in pairs(Database.societies) do
-  local society = DuckSociety()
-  v.roles = {}
-  v.members = {}
-  if Database.roles then
-    for _, role in pairs(Database.roles) do
-      if role.societyId == v.id then
-        table.insert(v.roles, role)
-      end
-    end
-  end
-  if Database.members then
-    for _, member in pairs(Database.members) do
-      if member.societyId == v.id then
-        table.insert(v.members, member)
-      end
-    end
-  end
-  society.loadFromDatabase(v)
-  Societies[society.getId()] = society
-end
+
 
 for k,v in pairs(Societies) do
   v.generateEventHandler()
