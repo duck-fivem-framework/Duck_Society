@@ -218,6 +218,12 @@ function DuckSociety()
       return false, 'No default role available in this society'
     end
 
+    -- Check if the player is already a member of this society
+    local existingMember, message = self.getMemberByPlayerId(player.getId())
+    if existingMember then
+      return false, 'Player is already a member of this society'
+    end
+
     local newMember = DuckSocietyMembers()
     newMember.setSociety(self)
     newMember.setRole(role)
