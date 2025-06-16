@@ -9,12 +9,12 @@ function StoreDatabase()
       print("FAILED TO SAVE DATABASE: "..tostring(m).."!")
       return
     end
-    f:write("database = {\n")
-    f:write("    maxSocityId = " .. database.maxSocityId .. ",\n")
-    f:write("    maxMemberId = " .. database.maxMemberId .. ",\n")
-    f:write("    maxRoleId = " .. database.maxRoleId .. ",\n")
-    f:write("    maxIdentityId = " .. database.maxIdentityId .. ",\n")
-    f:write("    maxPlayerId = " .. database.maxPlayerId .. ",\n")
+    f:write("Database = {\n")
+    f:write("    maxSocityId = " .. Database.maxSocityId .. ",\n")
+    f:write("    maxMemberId = " .. Database.maxMemberId .. ",\n")
+    f:write("    maxRoleId = " .. Database.maxRoleId .. ",\n")
+    f:write("    maxIdentityId = " .. Database.maxIdentityId .. ",\n")
+    f:write("    maxPlayerId = " .. Database.maxPlayerId .. ",\n")
     f:write("    societies = {\n")
     for _,society in pairs(Societies) do
       f:write("        {\n")

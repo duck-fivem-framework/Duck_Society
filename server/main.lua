@@ -2,30 +2,30 @@ Societies = {}
 Identities = {}
 Players = {}
 
-for k,v in pairs(database.identities) do
+for k,v in pairs(Database.identities) do
   local identity = DuckIdentity()
   identity.loadFromDatabase(v)
   Identities[identity.getId()] = identity
 end
-for k,v in pairs(database.players) do
+for k,v in pairs(Database.players) do
   local player = DuckPlayer()
   player.loadFromDatabase(v)
   Players[player.getId()] = player
 end
 
-for k,v in pairs(database.societies) do
+for k,v in pairs(Database.societies) do
   local society = DuckSociety()
   v.roles = {}
   v.members = {}
-  if database.roles then
-    for _, role in pairs(database.roles) do
+  if Database.roles then
+    for _, role in pairs(Database.roles) do
       if role.societyId == v.id then
         table.insert(v.roles, role)
       end
     end
   end
-  if database.members then
-    for _, member in pairs(database.members) do
+  if Database.members then
+    for _, member in pairs(Database.members) do
       if member.societyId == v.id then
         table.insert(v.members, member)
       end
@@ -52,20 +52,20 @@ end
 
 local function createPlayerWithInfo(identifier, name)
     local identity = DuckIdentity()
-    database.maxIdentityId = database.maxIdentityId + 1
+    Database.maxIdentityId = Database.maxIdentityId + 1
     identity.setFirstname("Unknown")
     identity.setLastname("Unknown")
     identity.setDateOfBirth(os.date("%Y-%m-%d")) -- Set to current date for simplicity
-    identity.setId(database.maxIdentityId) -- Assuming getNextId() is a method to get the next available ID
+    identity.setId(Database.maxIdentityId) -- Assuming getNextId() is a method to get the next available ID
 
     Identities[identity.getId()] = identity
     print(string.format("Created new identity for player %s: %s", name, identity.toString()))
 
     -- Create a new DuckPlayer instance if the player does not exist
     local playerObject = DuckPlayer()
-    database.maxPlayerId = database.maxPlayerId + 1
+    Database.maxPlayerId = Database.maxPlayerId + 1
 
-    playerObject.setId(database.maxPlayerId) -- Assuming getNextId() is a method to get the next available ID
+    playerObject.setId(Database.maxPlayerId) -- Assuming getNextId() is a method to get the next available ID
     playerObject.setIdentifier(identifier)
     playerObject.setMoney(0)
     playerObject.setIdentityId(identity.getId()) -- Set to nil initially
