@@ -201,11 +201,10 @@ RegisterCommand("removeSocietyMember", function(source, args, rawCommand)
         return
     end
 
-    local success, message = society.removeMember(member)
-    if success then
-        print("Member removed successfully: " .. member.toString())
-    else
+    local success, message = society.firePlayer(member)
+    if not success then
         print("Error removing member: " .. message)
+        return
     end
 
 end, false)
