@@ -274,11 +274,6 @@ function DuckSociety()
     return true, 'Player fired successfully'
   end
 
-  self.toString = function()
-    return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d, serviceCount: %d }",
-      self.getId(), self.getName(), self.getLabel(), #self.getRoles(), #self.getMembers(), self.serviceCount())
-  end
-
   self.serviceCount = function()
     local count = 0
     for _, member in pairs(self.members) do
@@ -290,6 +285,67 @@ function DuckSociety()
       end
     end
     return count
+  end
+
+  self.promote = function(player, role)
+    local compatibility, errorMessage = self.checkPlayerCompatibility(player)
+    if not compatibility then
+      return false, errorMessage
+    end
+
+    compatibility, errorMessage = self.checkRoleCompatibility(role)
+    if not compatibility then
+      return false, errorMessage
+    end
+
+    local member, message = self.getMemberByPlayerId(player.getId())
+    if not member then
+      return false, message
+    end
+
+    member.setRole(role)
+    print(('Player %d promoted to role %s in society %s'):format(player.getId(), role.getName(), self.getName()))
+
+    if player.isOnline() then
+      TriggerClientEvent(self.getFullEventName('playerPromoted'), player.getSource(), player.getId(), self.getId(), role.getId())
+    end
+
+    return true, 'Player promoted successfully'
+  end
+
+  self.demote = function(player, role)
+    local compatibility, errorMessage = self.checkPlayerCompatibility(player)
+    if not compatibility then
+      return false, errorMessage
+    end
+
+    compatibility, errorMessage = self.checkRoleCompatibility(role)
+    if not compatibility then
+      return false, errorMessage
+    end
+
+    local member, message = self.getMemberByPlayerId(player.getId())
+    if not member then
+      return false, message
+    end
+
+    if member.getRole().getId() == role.getId() then
+      return false, 'Player is already in this role'
+    end
+
+    member.setRole(role)
+    print(('Player %d demoted to role %s in society %s'):format(player.getId(), role.getName(), self.getName()))
+
+    if player.isOnline() then
+      TriggerClientEvent(self.getFullEventName('playerDemoted'), player.getSource(), player.getId(), self.getId(), role.getId())
+    end
+
+    return true, 'Player demoted successfully'
+  end
+
+  self.toString = function()
+    return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d, serviceCount: %d }",
+      self.getId(), self.getName(), self.getLabel(), #self.getRoles(), #self.getMembers(), self.serviceCount())
   end
 
   return self

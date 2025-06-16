@@ -23,7 +23,7 @@ Database = {
             name = "officer",
             label = "Officer",
             salary = 5000,
-            isDefault = true
+            isDefault = true,
         },
         {
             id = 2,
