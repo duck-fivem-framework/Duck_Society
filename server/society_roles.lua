@@ -26,6 +26,63 @@ function DuckSocietyRoles()
     self.getPromotableRoles = function() return self.promotableRoles end
     self.getDemotableRoles = function() return self.demotableRoles end
 
+    self.canPromotePlayer = function(player, newRole)
+        if not player or type(player) ~= 'table' or not player.__metas or player.__metas.object ~= Config.MagicString.KeyStringPlayers then
+            print("Error: Invalid player provided for promotion")
+            return false, 'Invalid player provided'
+        end
+
+        if not newRole or type(newRole) ~= 'table' or not newRole.__metas or newRole.__metas.object ~= Config.MagicString.KeyStringRoles then
+            print("Error: Invalid role provided for promotion")
+            return false, 'Invalid role provided'
+        end
+
+        if newRole.getSocietyId() ~= self.getSocietyId() then
+            print("Error: Role does not belong to the same society")
+            return false, 'Role does not belong to the same society'
+        end
+
+        local currentRole = nil
+        for _, members in pairs(self.getSociety().getMembers()) do
+            if members.getPlayerId() == player.getId() then
+                currentRole = members.getRole()
+                break
+            end
+        end
+
+        if not currentRole then
+            print("Error: Player does not have a role in this society")
+            return false, 'Player does not have a role in this society'
+        end
+
+        if not self.promotableRoles[currentRole.getId()] then
+            print("Error: Role is not in the promotable roles list")
+            return false, 'Role is not in the promotable roles list'
+        end
+
+        if not self.promotableRoles[newRole.getId()] then
+            print("Error: NewRole is not promotable")
+            return false, 'NewRole is not promotable'
+        end
+
+        if currentRole.getId() == newRole.getId() then
+            print("Error: Player already has this role")
+            return false, 'Player already has this role'
+        end
+
+        if currentRole.getSalary() >= newRole.getSalary() then
+            print("Error: New role must have a higher salary than the current role")
+            return false, 'New role must have a higher salary than the current role'
+        end
+
+        if newRole.getIsDefault() then
+            print("Error: Cannot promote to a default role")
+            return false, 'Cannot promote to a default role'
+        end
+
+        return true, 'Player can be promoted to the new role'
+    end
+
     self.addPromotableRole = function(role)
         if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
             print("Error: Invalid role provided for promotable roles")

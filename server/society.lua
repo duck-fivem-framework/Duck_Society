@@ -287,8 +287,13 @@ function DuckSociety()
     return count
   end
 
-  self.promote = function(player, role)
+  self.promote = function(player, role, actionner)
     local compatibility, errorMessage = self.checkPlayerCompatibility(player)
+    if not compatibility then
+      return false, errorMessage
+    end
+
+    compatibility, errorMessage = self.checkPlayerCompatibility(actionner)
     if not compatibility then
       return false, errorMessage
     end
@@ -301,6 +306,24 @@ function DuckSociety()
     local member, message = self.getMemberByPlayerId(player.getId())
     if not member then
       return false, message
+    end
+
+    if actionner ~= nil then
+      local actionnerMember = self.getMemberByPlayerId(actionner.getId())
+      if not actionnerMember then
+        return false, 'Actionner is not a member of this society'
+      end
+      if actionner.getId() == member.getPlayerId() then
+        return false, 'You can\'t promote yourself'
+      end
+      local actionnerMember, actionnerMessage = self.getMemberByPlayerId(actionner.getId())
+      if not actionnerMember then
+        return false, actionnerMessage
+      end
+      local promotePermission, promoteMessage = actionnerMember.canPromotePlayer(player, role)
+      if not promotePermission then
+        return false, promoteMessage
+      end
     end
 
     member.setRole(role)
@@ -313,13 +336,13 @@ function DuckSociety()
     return true, 'Player promoted successfully'
   end
 
-  self.demote = function(player, role)
+  self.demote = function(player, actionner)
     local compatibility, errorMessage = self.checkPlayerCompatibility(player)
     if not compatibility then
       return false, errorMessage
     end
 
-    compatibility, errorMessage = self.checkRoleCompatibility(role)
+    compatibility, errorMessage = self.checkPlayerCompatibility(actionner)
     if not compatibility then
       return false, errorMessage
     end
@@ -329,23 +352,32 @@ function DuckSociety()
       return false, message
     end
 
-    if member.getRole().getId() == role.getId() then
-      return false, 'Player is already in this role'
+    if actionner ~= nil then
+      local actionnerMember = self.getMemberByPlayerId(actionner.getId())
+      if not actionnerMember then
+        return false, 'Actionner is not a member of this society'
+      end
+      if actionner.getId() == member.getPlayerId() then
+        return false, 'You can\'t demote yourself'
+      end
+      local actionnerMember, actionnerMessage = self.getMemberByPlayerId(actionner.getId())
+      if not actionnerMember then
+        return false, actionnerMessage
+      end
+      local demotePermission, demoteMessage = actionnerMember.canDemotePlayer(player)
+      if not demotePermission then
+        return false, demoteMessage
+      end
     end
 
-    member.setRole(role)
-    print(('Player %d demoted to role %s in society %s'):format(player.getId(), role.getName(), self.getName()))
+    member.setRole(self.getDefaultRole())
+    print(('Player %d demoted in society %s'):format(player.getId(), self.getName()))
 
     if player.isOnline() then
-      TriggerClientEvent(self.getFullEventName('playerDemoted'), player.getSource(), player.getId(), self.getId(), role.getId())
+      TriggerClientEvent(self.getFullEventName('playerDemoted'), player.getSource(), player.getId(), self.getId())
     end
 
     return true, 'Player demoted successfully'
-  end
-
-  self.toString = function()
-    return string.format("DuckSociety: { id: %d, name: %s, label: %s, roles: %d, members: %d, serviceCount: %d }",
-      self.getId(), self.getName(), self.getLabel(), #self.getRoles(), #self.getMembers(), self.serviceCount())
   end
 
   return self
