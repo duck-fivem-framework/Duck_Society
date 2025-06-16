@@ -33,7 +33,7 @@ function StoreDatabase()
             f:write("            name = \"" .. role.getName() .. "\",\n")
             f:write("            label = \"" .. role.getLabel() .. "\",\n")
             f:write("            salary = " .. role.getSalary() .. ",\n")
-            f:write("            isDefault = " .. tostring(role.getIsDefault()) .. "\n")
+            f:write("            isDefault = " .. tostring(role.getIsDefault()) .. ",\n")
             f:write("            canPromote = {\n")
             for _,promotableRole in pairs(role.getPromotableRoles()) do
                 f:write("                " .. promotableRole.getId() .. ",\n")

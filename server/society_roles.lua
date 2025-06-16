@@ -1,6 +1,6 @@
 function DuckSocietyRoles()
     local self = {}
-    self.__metas = { object = Config.MagicString.KeyStringRoles }
+    self.__metas = { object = Config.MagicString.DuckSocietyRoles }
 
     self.id = nil
     self.societyId = nil
@@ -140,7 +140,7 @@ function DuckSocietyRoles()
     end
 
     self.addPromotableRole = function(role)
-        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
+        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.DuckSocietyRoles then
             print("Error: Invalid role provided for promotable roles")
             return false, 'Invalid role provided'
         end
@@ -155,13 +155,18 @@ function DuckSocietyRoles()
             return false, 'Role does not belong to the same society'
         end
 
+        if self.promotableRoles[role.getId()] then
+            print("Error: Role ID already exists in promotable roles")
+            return false, 'Role ID already exists in promotable roles'
+        end
+
         self.promotableRoles[role.getId()] = role
 
         return true, 'Role added to promotable roles'
     end
 
     self.removePromotableRole = function(role)
-        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
+        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.DuckSocietyRoles then
             print("Error: Invalid role provided for promotable roles")
             return false, 'Invalid role provided'
         end
@@ -238,22 +243,32 @@ function DuckSocietyRoles()
 
     self.loadPermissionFromDatabase = function(data)
         if data then
-            if data.promotableRoles then
-                for _, roleId in pairs(data.promotableRoles) do
+            if data.canPromote then
+                for _, roleId in pairs(data.canPromote) do
                     local role = Societies[self.getSocietyId()].getRoleById(roleId)
                     if role then
-                        self.addPromotableRole(role)
+                        local success, error = self.addPromotableRole(role)
+                        if not success then
+                            print("Error: " .. error)
+                        else
+                            print("Promotable role added successfully: " .. role.toString())
+                        end
                     else
                         print("Error: Promotable role with ID " .. roleId .. " not found")
                     end
                 end
             end
 
-            if data.demotableRoles then
-                for _, roleId in pairs(data.demotableRoles) do
+            if data.canDemote then
+                for _, roleId in pairs(data.canDemote) do
                     local role = Societies[self.getSocietyId()].getRoleById(roleId)
                     if role then
-                        self.addDemotableRole(role)
+                        local success, error = self.addDemotableRole(role)
+                        if not success then
+                            print("Error: " .. error)
+                        else
+                            print("Demotable role added successfully: " .. role.toString())
+                        end
                     else
                         print("Error: Demotable role with ID " .. roleId .. " not found")
                     end
@@ -278,6 +293,21 @@ function DuckSocietyRoles()
         return true, 'Society set successfully'
     end
 
+    self.getSociety = function()
+        if not self.societyId then
+            print("Error: Society ID is not set")
+            return nil, 'Society ID is not set'
+        end
+
+        local society = Societies[self.societyId]
+        if not society then
+            print("Error: Society not found")
+            return nil, 'Society not found'
+        end
+
+        return society, 'Society retrieved successfully'
+    end
+
     self.toString = function()
         return string.format("DuckSocietyRoles: { id: %d, societyId: %d, name: '%s', label: '%s', salary: %d, isDefault: %s }",
             self.getId(), self.getSocietyId(), self.getName(), self.getLabel(), self.getSalary(), tostring(self.getIsDefault()))
@@ -290,10 +320,16 @@ function LoadSocietiesRoles()
   for k,v in pairs(Database.roles) do
     local role = DuckSocietyRoles()
     role.loadFromDatabase(v)
-    if Societies[role.getSocietyId()] then
-      Societies[role.getSocietyId()].addRole(role)
-    else
+    local society = Societies[role.getSocietyId()]
+    if not society then
       print("Error: Society with ID " .. role.getSocietyId() .. " not found for role " .. role.getName())
+      return
+    end
+    local success, message = society.addRole(role)
+    if not success then
+      print("Error: Failed to add role " .. role.getName() .. " to society " .. society.getName() .. ": " .. message)
+    else
+      print("Role loaded successfully: " .. role.toString())
     end
   end
 end
@@ -426,11 +462,10 @@ RegisterCommand("addNewPromotableRole", function(source, args, rawCommand)
         
         local role = nil
         for k,v in pairs(Societies) do
-            for kk,vv in pairs(v.getRoles()) do
-                if vv.getId() == roleId then
-                    role = vv
-                    break
-                end
+            local roleCheck = v.getRoleById(roleId)
+            if roleCheck then
+                role = roleCheck
+                break
             end
         end
 
@@ -479,11 +514,10 @@ RegisterCommand("removePromotableRole", function(source, args, rawCommand)
         
         local role = nil
         for k,v in pairs(Societies) do
-            for kk,vv in pairs(v.getRoles()) do
-                if vv.getId() == roleId then
-                    role = vv
-                    break
-                end
+            local roleCheck = v.getRoleById(roleId)
+            if roleCheck then
+                role = roleCheck
+                break
             end
         end
 

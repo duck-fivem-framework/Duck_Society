@@ -5,13 +5,18 @@ Players = {}
 LoadIdentities()
 LoadPlayers()
 LoadSocieties()
+
+Wait(1000)
+
 LoadSocietiesRoles()
 LoadSocietiesMembers()
+
+Wait(1000)
+
 LoadSocietiesRolesDatas()
 
 for k,v in pairs(Societies) do
   v.generateEventHandler()
-
   Wait(1000)
 end
 
