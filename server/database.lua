@@ -87,4 +87,6 @@ RegisterCommand("savedatabase", function(source, args, rawCommand)
   end
 end, false)
 
-Mysql = nil
+MySQL = {
+    
+}

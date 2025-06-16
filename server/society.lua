@@ -225,6 +225,7 @@ function DuckSociety()
     newMember.setPlayer(player)
     if Config.useDb then
       -- If using database, we need to check if the player is already hired
+      
       local query = [[
         SELECT COUNT(*) as count FROM society_members WHERE society_id = ? AND player_id = ?
       ]]
