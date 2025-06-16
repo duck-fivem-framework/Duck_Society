@@ -20,11 +20,11 @@ function DuckSociety()
   self.handlerTest = function()
     print(self.toString())
     print('----- Roles -----')
-    for _, role in pairs(self.roles) do
+    for _, role in pairs(self.getRoles()) do
       print(role.toString())
     end
     print('----- Members -----')
-    for _, member in pairs(self.members) do
+    for _, member in pairs(self.getMembers()) do
       print(member.toString())
     end
   end

@@ -23,8 +23,10 @@ function DuckPlayer()
     self.isOnline = function() return self.online end
     self.setSource = function(source) self.source = source end
     self.getSource = function() return self.source end
+    self.getIdentityId = function() return self.identityId end
+    self.setIdentityId = function(identityId) self.identityId = tonumber(identityId) end
 
-    
+
     self.loadFromDatabase = function(data)
         if data then
             self.setId(data.id)

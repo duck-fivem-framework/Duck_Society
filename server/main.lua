@@ -1,7 +1,3 @@
-local resource = GetCurrentResourceName()
-local path = GetResourcePath(resource)
-local databaseFile = path.."/shared/database.lua"
-
 societies = {}
 identities = {}
 players = {}
@@ -101,12 +97,17 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     end
 
     if not playerObject then
+        -- Create a new DuckPlayer instance if the player does not exist
+
         local identity = DuckIdentity()
         database.maxIdentityId = database.maxIdentityId + 1
         identity.setFirstname("Unknown")
         identity.setLastname("Unknown")
         identity.setDateOfBirth(os.date("%Y-%m-%d")) -- Set to current date for simplicity
         identity.setId(database.maxIdentityId) -- Assuming getNextId() is a method to get the next available ID
+
+        identities[identity.getId()] = identity
+        print(string.format("Created new identity for player %s: %s", name, identity.toString()))
 
         -- Create a new DuckPlayer instance if the player does not exist
         playerObject = DuckPlayer()
