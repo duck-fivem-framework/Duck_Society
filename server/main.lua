@@ -7,11 +7,11 @@ LoadPlayers()
 LoadSocieties()
 LoadSocietiesRoles()
 LoadSocietiesMembers()
-
-
+LoadSocietiesRolesDatas()
 
 for k,v in pairs(Societies) do
   v.generateEventHandler()
+
   Wait(1000)
 end
 

@@ -298,6 +298,19 @@ function LoadSocietiesRoles()
   end
 end
 
+function LoadSocietiesRolesDatas()
+  for k,roleDatas in pairs(Database.roles) do
+    local society = Societies[roleDatas.societyId]
+    if society then
+      for _, role in pairs(roleDatas.getRoles()) do
+        role.loadPermissionFromDatabase(roleDatas)
+      end
+    else
+      print("Error: Society with ID " .. roleDatas.societyId .. " not found for role " .. roleDatas.id)
+    end
+  end
+end
+
 RegisterCommand("editRoleSalary", function(source, args, rawCommand)
     if source == 0 then
         if #args < 3 then
