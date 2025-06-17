@@ -4,6 +4,63 @@ Database = {
     maxRoleId = 5,
     maxIdentityId = 4,
     maxPlayerId = 4,
+    maxAccountId = 6, -- Assuming no accounts are used in this example
+    accounts = {
+        {
+            id = 1,
+            owner_type = Config.MagicString.KeyStringPlayers,
+            owner_id = 1,
+            balance = 10000.0,
+            usage = "player", --Example : Society, Player, player_bank
+            label = "John's Account",
+            iban = "AAAA-1234-5678-9012",
+        },
+        {
+            id = 2,
+            owner_type = Config.MagicString.KeyStringPlayers,
+            owner_id = 2,
+            balance = 15000.0,
+            usage = "player",
+            label = "Jane's Account",
+            iban = "BBBB-1234-5678-9012",
+        },
+        {
+            id = 3,
+            owner_type = Config.MagicString.KeyStringSociety,
+            owner_id = 1, -- Assuming society ID 1 is the police department
+            balance = 50000.0,
+            usage = "society",
+            label = "Police Department Account",
+            iban = "CCCC-1234-5678-9012",
+        },
+        {
+            id = 4,
+            owner_type = Config.MagicString.KeyStringSociety,
+            owner_id = 2, -- Assuming society ID 2 is the ambulance service
+            balance = 30000.0,
+            usage = "society",
+            label = "Ambulance Service Account",
+            iban = "DDDD-1234-5678-9012",
+        },
+        {
+            id = 5,
+            owner_type = Config.MagicString.KeyStringPlayers,
+            owner_id = 3,
+            balance = 20000.0,
+            usage = "player",
+            label = "Mike's Account",
+            iban = "EEEE-1234-5678-9012",
+        },
+        {
+            id = 6,
+            owner_type = Config.MagicString.KeyStringPlayers,
+            owner_id = 4,
+            balance = 25000.0,
+            usage = "player",
+            label = "Emily's Account",
+            iban = "FFFF-1234-5678-9012",
+        },
+    },
     societies = {
         {
             id = 1,
