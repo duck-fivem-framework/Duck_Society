@@ -53,6 +53,25 @@ function DuckSociety()
     end
   end
 
+  self.sendMoneyToActiveMembers = function()
+    if self.serviceCount() == 0 then
+      print('No active members in society ' .. self.getName())
+      return false, 'No active members to send money to'
+    end
+    for k,v in pairs(self.getMembers()) do
+      if v.getPlayer() ~= nil then
+        local player = v.getPlayer()
+        if player.isOnline() then
+          local money = v.getRole().getMoney()
+          if money > 0 then
+            player.addMoney(money)
+            print(('Sent $%d to player %d in society %s'):format(money, player.getId(), self.getName()))
+          end
+        end
+      end
+    end
+  end
+
   self.checkRoleCompatibility = function(role)
     if type(role) ~= 'table' then
       return false, 'Role must be a table'

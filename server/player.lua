@@ -79,6 +79,40 @@ function DuckPlayer()
             self.identityId and self.getIdentity().getFullName() or 'nil')
     end
 
+    self.addMoney = function(amount)
+        if type(amount) ~= 'number' then
+            print("Error: Amount must be a number")
+            return false, 'Amount must be a number'
+        end
+        local newMoney = self.getMoney() + amount < 0
+        if newMoney < 0 then
+            self.setMoney(0)
+            return true, 'Money cannot be negative, set to 0'
+        end
+        self.setMoney(self.getMoney() + amount)
+        return true, 'Money added successfully'
+    end
+
+    self.removeMoney = function(amount)
+        if type(amount) ~= 'number' then
+            print("Error: Amount must be a number")
+            return false, 'Amount must be a number'
+        end
+        local newMoney = self.getMoney() - amount < 0
+        if newMoney < 0 then
+            self.setMoney(0)
+            return true, 'Money cannot be negative, set to 0'
+        end
+
+        if newMoney > self.getMoney() then
+            print("Error: Not enough money to remove")
+            return false, 'Not enough money to remove'
+        end
+        
+        self.setMoney(self.getMoney() - amount)
+        return true, 'Money removed successfully'
+    end
+
     return self
 end
 
