@@ -35,6 +35,9 @@ function DuckAccouunt()
             self.setOwnerType(data.owner_type)
             self.setOwnerId(data.owner_id)
             self.setBalance(data.balance or 0.0) -- Default to 0.0 if balance is not provided
+            self.setUsage(data.usage or 'not_defined') -- Default to 'player_bank' if usage is not provided
+            self.setLabel(data.label or 'No Label') -- Default to 'No Label' if label is not provided
+            self.setIban(data.iban or 'No IBAN') -- Default to 'No IBAN' if iban is not provided
         else
             print("Error: No data provided to load DuckAccount")
         end
