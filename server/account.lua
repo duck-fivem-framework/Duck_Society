@@ -10,7 +10,9 @@ function DuckAccouunt()
     self.owner_type = nil -- 'Config.MagicString.KeyString'
     self.owner_id = nil -- ID of the entity that owns this account
     self.balance = 0.0 -- Balance of the account
-
+    self.usage = nil -- 'player' or 'society_bank' or 'player_bank' or 
+    self.label = nil -- Label for the account
+    self.iban = nil -- International Bank Account Number (IBAN) for the account
 
     self.setId = function(id) self.id = tonumber(id) end
     self.getId = function() return self.id end
@@ -20,6 +22,12 @@ function DuckAccouunt()
     self.getOwnerId = function() return self.owner_id end
     self.setBalance = function(balance) self.balance = tonumber(balance) end
     self.getBalance = function() return self.balance end
+    self.setUsage = function(usage) self.usage = usage end
+    self.getUsage = function() return self.usage end
+    self.setLabel = function(label) self.label = label end
+    self.getLabel = function() return self.label end
+    self.setIban = function(iban) self.iban = iban end
+    self.getIban = function() return self.iban end
 
     self.loadFromDatabase = function(data)
         if data then

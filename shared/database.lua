@@ -11,7 +11,7 @@ Database = {
             owner_type = Config.MagicString.KeyStringPlayers,
             owner_id = 1,
             balance = 10000.0,
-            usage = "player", --Example : Society, Player, player_bank
+            usage = "player_bank", --Example : Society, Player, player_bank
             label = "John's Account",
             iban = "AAAA-1234-5678-9012",
         },
@@ -20,7 +20,7 @@ Database = {
             owner_type = Config.MagicString.KeyStringPlayers,
             owner_id = 2,
             balance = 15000.0,
-            usage = "player",
+            usage = "player_bank",
             label = "Jane's Account",
             iban = "BBBB-1234-5678-9012",
         },
@@ -29,7 +29,7 @@ Database = {
             owner_type = Config.MagicString.KeyStringSociety,
             owner_id = 1, -- Assuming society ID 1 is the police department
             balance = 50000.0,
-            usage = "society",
+            usage = "society_bank",
             label = "Police Department Account",
             iban = "CCCC-1234-5678-9012",
         },
@@ -38,7 +38,7 @@ Database = {
             owner_type = Config.MagicString.KeyStringSociety,
             owner_id = 2, -- Assuming society ID 2 is the ambulance service
             balance = 30000.0,
-            usage = "society",
+            usage = "society_bank",
             label = "Ambulance Service Account",
             iban = "DDDD-1234-5678-9012",
         },
@@ -47,7 +47,7 @@ Database = {
             owner_type = Config.MagicString.KeyStringPlayers,
             owner_id = 3,
             balance = 20000.0,
-            usage = "player",
+            usage = "player_bank",
             label = "Mike's Account",
             iban = "EEEE-1234-5678-9012",
         },
@@ -56,7 +56,7 @@ Database = {
             owner_type = Config.MagicString.KeyStringPlayers,
             owner_id = 4,
             balance = 25000.0,
-            usage = "player",
+            usage = "player_bank",
             label = "Emily's Account",
             iban = "FFFF-1234-5678-9012",
         },
