@@ -18,11 +18,7 @@ function StoreDatabase()
     f:write("    maxAccountId = " .. Database.maxAccountId .. ",\n")
     f:write("    societies = {\n")
     for _,society in pairs(Societies) do
-      f:write("        {\n")
-      f:write("            id = " .. society.getId() .. ",\n")
-      f:write("            name = \"" .. society.getName() .. "\",\n")
-      f:write("            label = \"" .. society.getLabel() .. "\",\n")
-      f:write("        },\n")
+      society.storeInFile(f)
     end
     f:write("    },\n")
     f:write("    roles = {\n")

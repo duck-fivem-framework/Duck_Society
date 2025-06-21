@@ -395,6 +395,14 @@ function DuckSociety()
     return true, 'Player demoted successfully'
   end
 
+  self.storeInFile = function(f)
+      f:write("        {\n")
+      f:write("            id = " .. self.getId() .. ",\n")
+      f:write("            name = \"" .. self.getName() .. "\",\n")
+      f:write("            label = \"" .. self.getLabel() .. "\",\n")
+      f:write("        },\n")
+  end
+
   self.toString = function()
     return string.format("DuckSociety: { id: %d, name: '%s', label: '%s' }",
       self.getId(), self.getName(), self.getLabel())
