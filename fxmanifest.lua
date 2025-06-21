@@ -14,6 +14,7 @@ client_scripts {
 }
 
 server_scripts {
+    'server/protos/*.lua',
     'shared/database.lua',
     'server/database.lua',
     'server/account.lua',

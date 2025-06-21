@@ -2,23 +2,18 @@ function DuckSocietyRoles()
     local self = {}
     self.__metas = { object = Config.MagicString.DuckSocietyRoles }
 
-    self.id = nil
     self.societyId = nil
-    self.name = nil
-    self.label = nil
     self.salary = 0
     self.isDefault = false
     self.promotableRoles = {}
     self.demotableRoles = {}
 
-    self.setId = function(id) self.id = tonumber(id) end
-    self.getId = function() return self.id end
+    self = __LoadId(self)
+    self = __LoadName(self)
+    self = __LoadLabel(self)
+
     self.setSocietyId = function(societyId) self.societyId = tonumber(societyId) end
     self.getSocietyId = function() return self.societyId end
-    self.setName = function(name) self.name = string.lower(name) end
-    self.getName = function() return self.name end
-    self.setLabel = function(label) self.label = label end
-    self.getLabel = function() return self.label end
     self.setSalary = function(salary) self.salary = tonumber(salary) end
     self.getSalary = function() return self.salary end
     self.setIsDefault = function(isDefault) self.isDefault = isDefault end

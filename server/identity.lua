@@ -2,13 +2,12 @@ function DuckIdentity()
     local self = {}
     self.__metas = { object = Config.MagicString.KeyStringIdentity }
 
-    self.id = nil
     self.firstname = nil
     self.lastname = nil
     self.dateofbirth = nil
 
-    self.setId = function(id) self.id = tonumber(id) end
-    self.getId = function() return self.id end
+    self = __LoadId(self)
+
     self.setFirstname = function(firstname) self.firstname = string.lower(firstname) end
     self.getFirstname = function() return self.firstname end
     self.setLastname = function(lastname) self.lastname = string.lower(lastname) end

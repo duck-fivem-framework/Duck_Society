@@ -2,20 +2,13 @@ function DuckSociety()
   local self = {}
   self.__metas = { object = Config.MagicString.KeyStringSociety }
 
-  self.id = nil
-  self.name = nil
-  self.label = nil
   self.roles = {}
   self.members = {}
 
-  self.setId = function(id) self.id = tonumber(id) end
-  self.getId = function() return self.id end
-  
-  self.setName = function(name) self.name = string.lower(name) end
-  self.getName = function() return self.name end
-  
-  self.setLabel = function(label) self.label = label end
-  self.getLabel = function() return self.label end
+
+  self = __LoadId(self)
+  self = __LoadName(self)
+  self = __LoadLabel(self)
     
   self.handlerTest = function()
     print(self.toString())

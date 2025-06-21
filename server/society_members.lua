@@ -2,13 +2,12 @@ function DuckSocietyMembers()
     local self = {}
     self.__metas = { object = Config.MagicString.KeyStringMembers }
 
-    self.id = nil
     self.societyId = nil
     self.roleId = nil
     self.playerId = nil
 
-    self.setId = function(id) self.id = tonumber(id) end
-    self.getId = function() return self.id end
+    self = __LoadId(self)
+
     self.setSocietyId = function(societyId) self.societyId = tonumber(societyId) end
     self.getSocietyId = function() return self.societyId end
     self.setRoleId = function(roleId) self.roleId = tonumber(roleId) end

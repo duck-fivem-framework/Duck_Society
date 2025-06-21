@@ -2,7 +2,6 @@ function DuckPlayer()
     local self = {}
     self.__metas = { object = Config.MagicString.KeyStringPlayers }
 
-    self.id = nil
     self.identifier = nil
 
     self.identityId = nil
@@ -11,8 +10,8 @@ function DuckPlayer()
     self.online = false
     self.source = nil -- This will hold the source of the player, if applicable
 
-    self.setId = function(id) self.id = tonumber(id) end
-    self.getId = function() return self.id end
+    self = __LoadId(self)
+
     self.setIdentifier = function(identifier) self.identifier = identifier end
     self.getIdentifier = function() return self.identifier end
     self.setMoney = function(money) self.money = tonumber(money) end

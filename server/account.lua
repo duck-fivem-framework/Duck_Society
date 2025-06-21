@@ -6,20 +6,15 @@ function DuckAccouunt()
 
     self.__metas = { object = Config.MagicString.KeyStringAccount }
 
-    self.id = nil
-    self.owner_type = nil -- 'Config.MagicString.KeyString'
-    self.owner_id = nil -- ID of the entity that owns this account
+
     self.balance = 0.0 -- Balance of the account
     self.usage = nil -- 'player' or 'society_bank' or 'player_bank' or 
     self.label = nil -- Label for the account
     self.iban = nil -- International Bank Account Number (IBAN) for the account
 
-    self.setId = function(id) self.id = tonumber(id) end
-    self.getId = function() return self.id end
-    self.setOwnerType = function(owner_type) self.owner_type = owner_type end
-    self.getOwnerType = function() return self.owner_type end
-    self.setOwnerId = function(owner_id) self.owner_id = tonumber(owner_id) end
-    self.getOwnerId = function() return self.owner_id end
+    self = __LoadId(self)
+    self = __LoadOwner(self)
+
     self.setBalance = function(balance) self.balance = tonumber(balance) end
     self.getBalance = function() return self.balance end
     self.setUsage = function(usage) self.usage = usage end
@@ -40,34 +35,6 @@ function DuckAccouunt()
             self.setIban(data.iban or 'No IBAN') -- Default to 'No IBAN' if iban is not provided
         else
             print("Error: No data provided to load DuckAccount")
-        end
-    end
-
-    self.getOwner = function()
-        if not self.owner_type or not self.owner_id then
-            print("Error: Owner type or ID is not set")
-            return nil, 'Owner type or ID is not set'
-        end
-
-        if self.owner_type == Config.MagicString.KeyStringPlayer then
-            local player = Players[self.owner_id]
-            if player then
-                return player, 'Player retrieved successfully'
-            else
-                print("Error: Player not found")
-                return nil, 'Player not found'
-            end
-        elseif self.owner_type == Config.MagicString.KeyStringSociety then
-            local society = Societies[self.owner_id]
-            if society then
-                return society, 'Society retrieved successfully'
-            else
-                print("Error: Society not found")
-                return nil, 'Society not found'
-            end
-        else
-            print("Error: Invalid owner type")
-            return nil, 'Invalid owner type'
         end
     end
 
