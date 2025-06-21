@@ -24,24 +24,7 @@ function StoreDatabase()
     f:write("    roles = {\n")
     for _,society in pairs(Societies) do
         for _,role in pairs(society.getRoles()) do
-            f:write("        {\n")
-            f:write("            id = " .. role.getId() .. ",\n")
-            f:write("            societyId = " .. role.getSocietyId() .. ",\n")
-            f:write("            name = \"" .. role.getName() .. "\",\n")
-            f:write("            label = \"" .. role.getLabel() .. "\",\n")
-            f:write("            salary = " .. role.getSalary() .. ",\n")
-            f:write("            isDefault = " .. tostring(role.getIsDefault()) .. ",\n")
-            f:write("            canPromote = {\n")
-            for _,promotableRole in pairs(role.getPromotableRoles()) do
-                f:write("                " .. promotableRole.getId() .. ",\n")
-            end
-            f:write("            },\n")
-            f:write("            canDemote = {\n")
-            for _,demotableRole in pairs(role.getDemotableRoles()) do
-                f:write("                " .. demotableRole.getId() .. ",\n")
-            end
-            f:write("            }\n")
-            f:write("        },\n")
+          role.storeInFile(f)
         end
     end
     f:write("    },\n")

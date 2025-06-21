@@ -313,6 +313,27 @@ function DuckSocietyRoles()
             self.getId(), self.getSocietyId(), self.getName(), self.getLabel(), self.getSalary(), tostring(self.getIsDefault()))
     end
 
+    self.storeInFile = function(f)
+        f:write("        {\n")
+        f:write("            id = " .. self.getId() .. ",\n")
+        f:write("            societyId = " .. self.getSocietyId() .. ",\n")
+        f:write("            name = \"" .. self.getName() .. "\",\n")
+        f:write("            label = \"" .. self.getLabel() .. "\",\n")
+        f:write("            salary = " .. self.getSalary() .. ",\n")
+        f:write("            isDefault = " .. tostring(self.getIsDefault()) .. ",\n")
+        f:write("            canPromote = {\n")
+        for _,promotableRole in pairs(self.getPromotableRoles()) do
+            f:write("                " .. promotableRole.getId() .. ",\n")
+        end
+        f:write("            },\n")
+        f:write("            canDemote = {\n")
+        for _,demotableRole in pairs(self.getDemotableRoles()) do
+            f:write("                " .. demotableRole.getId() .. ",\n")
+        end
+        f:write("            }\n")
+        f:write("        },\n")
+    end
+
     return self
 end
 
