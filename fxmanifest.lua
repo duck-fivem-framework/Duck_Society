@@ -18,5 +18,6 @@ server_scripts {
     'server/protos/*.lua',
     'server/utils/*.lua',
     'server/classes/*.lua',
+    'server/Controllers/*.lua',
     'server/main.lua',
 }

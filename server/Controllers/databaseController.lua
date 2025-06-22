@@ -2,6 +2,15 @@ local resource = GetCurrentResourceName()
 local path = GetResourcePath(resource)
 local databaseFile = path.."/shared/database.lua"
 
+local function onRessourceStop(resourceName)
+  if (GetCurrentResourceName() ~= resourceName) then
+    return
+  end
+  StoreDatabase()
+end
+
+AddEventHandler('onResourceStop', onRessourceStop)
+
 function StoreDatabase()
   if not Config.useDb then
     local f,m = io.open(databaseFile,"w")

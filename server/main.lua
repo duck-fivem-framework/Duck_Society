@@ -6,21 +6,14 @@ LoadSocietyMembers()
 
 Wait(1000)
 
-
-
 for k,v in pairs(Societies) do
   v.lazyLoading()
   v.generateEventHandler()
 end
 
-function onRessourceStop(resourceName)
-  if (GetCurrentResourceName() ~= resourceName) then
-    return
-  end
-  StoreDatabase()
+for k,v in pairs(Players) do
+  v.lazyLoading()
 end
-AddEventHandler('onResourceStop', onRessourceStop)
-
 
 for _, playerId in ipairs(GetPlayers()) do
   local name = GetPlayerName(playerId)
