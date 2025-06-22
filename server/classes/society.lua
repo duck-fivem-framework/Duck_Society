@@ -7,7 +7,6 @@ function DuckSociety()
   self.roles = {}
   self.members = {}
 
-
   self = __LoadId(self)
   self = __LoadName(self)
   self = __LoadLabel(self)
@@ -32,8 +31,12 @@ function DuckSociety()
   self.lazyLoading = function()
     for _, role in pairs(SocietyRoles) do
       if role.getSocietyId() == self.getId() then
-        self.addRole(role)
-        role.lazyLoading()
+        local compatibility, errorMessage = self.addRole(role)
+        if not compatibility then
+          print(('Error adding role %s to society %s: %s'):format(role.getName(), self.getName(), errorMessage))
+        else
+          role.lazyLoading()
+        end
       end
     end
 
@@ -87,7 +90,7 @@ function DuckSociety()
       return false, 'Role must be a table'
     end
 
-    if not role.__metas or role.__metas.object ~= Config.MagicString.DuckSocietyRoles then
+    if not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
       return false, 'Invalid role object'
     end
 

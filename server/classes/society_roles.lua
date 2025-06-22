@@ -1,13 +1,12 @@
 SocietyRoles = {}
 
 function DuckSocietyRoles()
-    local self = DuckClass(Config.MagicString.DuckSocietyRoles)
+    local self = DuckClass(Config.MagicString.KeyStringRoles)
 
     self.salary = 0
     self.isDefault = false
     self.promotableRoles = {}
     self.demotableRoles = {}
-    self.members = {}
 
     self = __LoadId(self)
     self = __LoadName(self)
@@ -135,7 +134,7 @@ function DuckSocietyRoles()
     end
 
     self.addPromotableRole = function(role)
-        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.DuckSocietyRoles then
+        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
             print("Error: Invalid role provided for promotable roles")
             return false, 'Invalid role provided'
         end
@@ -161,7 +160,7 @@ function DuckSocietyRoles()
     end
 
     self.removePromotableRole = function(role)
-        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.DuckSocietyRoles then
+        if not role or type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
             print("Error: Invalid role provided for promotable roles")
             return false, 'Invalid role provided'
         end
@@ -230,7 +229,6 @@ function DuckSocietyRoles()
             self.setLabel(data.label)
             self.setSalary(data.salary)
             self.setIsDefault(data.isDefault)
-
         else
             print("Error: No data provided to load DuckSocietyRoles")
         end
@@ -317,10 +315,6 @@ function LoadSocietyRoles()
     role.loadFromDatabase(v)
     SocietyRoles[role.getId()] = role
   end
-end
-
-function LoadSocietiesRolesDatas()
-
 end
 
 RegisterCommand("editRoleSalary", function(source, args, rawCommand)

@@ -5,6 +5,7 @@ function __LoadSocietyRole(object)
 
     object.societyRoleId = nil
 
+                  
     if not object.getSocietyRoleId then
         object.getSocietyRoleId = function() return object.societyRoleId end
     end

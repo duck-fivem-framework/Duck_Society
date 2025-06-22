@@ -14,6 +14,7 @@ client_scripts {
 }
 
 server_scripts {
+    'shared/database.lua',
     'server/protos/*.lua',
     'server/utils/*.lua',
     'server/classes/*.lua',

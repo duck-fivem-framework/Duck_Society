@@ -21,7 +21,7 @@ function DuckSocietyMembers()
 
     self.toString = function()
         return string.format("DuckSocietyMembers: { id: %d, societyId: %d, roleId: %d, playerId: %d }",
-            self.getId(), self.getSocietyId(), self.getSocietyRoleIdId(), self.getPlayerId())
+            self.getId(), self.getSocietyId(), self.getSocietyRoleId(), self.getPlayerId())
     end
 
     self.storeInFile = function(f)
