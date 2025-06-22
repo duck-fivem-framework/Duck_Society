@@ -9,18 +9,16 @@ function DuckAccouunt()
 
     self.balance = 0.0 -- Balance of the account
     self.usage = nil -- 'player' or 'society_bank' or 'player_bank' or 
-    self.label = nil -- Label for the account
     self.iban = nil -- International Bank Account Number (IBAN) for the account
 
     self = __LoadId(self)
     self = __LoadOwner(self)
+    self = __LoadLabel(self)
 
     self.setBalance = function(balance) self.balance = tonumber(balance) end
     self.getBalance = function() return self.balance end
     self.setUsage = function(usage) self.usage = usage end
     self.getUsage = function() return self.usage end
-    self.setLabel = function(label) self.label = label end
-    self.getLabel = function() return self.label end
     self.setIban = function(iban) self.iban = iban end
     self.getIban = function() return self.iban end
 
