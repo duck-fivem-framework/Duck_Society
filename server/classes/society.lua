@@ -22,6 +22,11 @@ function DuckSociety()
     for _, member in pairs(self.getMembers()) do
       print(member.toString())
     end
+    print('----- Accounts -----')
+    for _, account in pairs(self.getAccounts()) do
+      print(account.toString())
+    end
+
   end
 
   self.generateEventHandler = function()
