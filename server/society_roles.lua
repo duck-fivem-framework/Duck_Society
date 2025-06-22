@@ -1,6 +1,5 @@
 function DuckSocietyRoles()
-    local self = {}
-    self.__metas = { object = Config.MagicString.DuckSocietyRoles }
+    local self = DuckClass(Config.MagicString.DuckSocietyRoles)
 
     self.societyId = nil
     self.salary = 0

@@ -1,6 +1,6 @@
 function DuckSociety()
-  local self = {}
-  self.__metas = { object = Config.MagicString.KeyStringSociety }
+
+  local self = DuckClass(Config.MagicString.KeyStringSociety)
 
   self.roles = {}
   self.members = {}

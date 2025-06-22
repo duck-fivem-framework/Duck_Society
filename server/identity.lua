@@ -1,6 +1,5 @@
 function DuckIdentity()
-    local self = {}
-    self.__metas = { object = Config.MagicString.KeyStringIdentity }
+    local self = DuckClass(Config.MagicString.KeyStringIdentity)
 
     self.firstname = nil
     self.lastname = nil

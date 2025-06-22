@@ -2,9 +2,7 @@ Accounts = {}
 
 function DuckAccouunt()
 
-    local self = {}
-
-    self.__metas = { object = Config.MagicString.KeyStringAccount }
+    local self = DuckClass(Config.MagicString.KeyStringAccount)
 
 
     self.balance = 0.0 -- Balance of the account
