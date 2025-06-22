@@ -3,14 +3,10 @@ SocietyMembers = {}
 function DuckSocietyMembers()
     local self = DuckClass(Config.MagicString.KeyStringMembers)
 
-    self.playerId = nil
-
     self = __LoadId(self)
     self = __LoadSociety(self)
     self = __LoadSocietyRole(self)
-
-    self.setPlayerId = function(playerId) self.playerId = tonumber(playerId) end
-    self.getPlayerId = function() return self.playerId end
+    self = __LoadPlayer(self)
 
     self.loadFromDatabase = function(data)
         if data then
@@ -23,31 +19,6 @@ function DuckSocietyMembers()
         end
     end
 
-    self.getPlayer = function()
-        if not self.playerId then
-            print("Error: Player ID is not set")
-            return nil, 'Player ID is not set'
-        end
-
-        local player = Players[self.playerId]
-        if not player then
-            print("Error: Player not found")
-            return nil, 'Player not found'
-        end
-
-        return player, 'Player retrieved successfully'
-    end
-
-    self.setPlayer = function(player)
-        if type(player) ~= 'table' or not player.__metas or player.__metas.object ~= Config.MagicString.KeyStringPlayers then
-            print("Error: Invalid player object")
-            return false, 'Invalid player object'
-        end
-
-        self.setPlayerId(player.getId())
-        return true, 'Player set successfully'
-    end
-    
     self.toString = function()
         return string.format("DuckSocietyMembers: { id: %d, societyId: %d, roleId: %d, playerId: %d }",
             self.getId(), self.getSocietyId(), self.getSocietyRoleIdId(), self.getPlayerId())
@@ -65,16 +36,11 @@ function DuckSocietyMembers()
     return self
 end
 
-function LoadSocietiesMembers()
+function LoadSocietyMembers()
     for k,v in pairs(Database.members) do
         local member = DuckSocietyMembers()
         member.loadFromDatabase(v)
-        if Societies[member.getSocietyId()] then
-            Societies[member.getSocietyId()].addMember(member)
-            SocietyMembers[member.getId()] = member
-        else
-            print("Error: Society with ID " .. member.getSocietyId() .. " not found for member " .. member.getId())
-        end
+        SocietyMembers[member.getId()] = member
     end
 end
 

@@ -7,6 +7,7 @@ function DuckSocietyRoles()
     self.isDefault = false
     self.promotableRoles = {}
     self.demotableRoles = {}
+    self.members = {}
 
     self = __LoadId(self)
     self = __LoadName(self)
@@ -299,39 +300,27 @@ function DuckSocietyRoles()
         f:write("        },\n")
     end
 
+    self.lazyLoading = function()
+        for k,roleDatas in pairs(Database.roles) do
+            if roleDatas.societyId == self.getSocietyId() and roleDatas.id == self.getId() then
+                self.loadPermissionFromDatabase(roleDatas)
+            end
+        end
+    end
+
     return self
 end
 
-function LoadSocietiesRoles()
+function LoadSocietyRoles()
   for k,v in pairs(Database.roles) do
     local role = DuckSocietyRoles()
     role.loadFromDatabase(v)
-    local society = Societies[role.getSocietyId()]
-    if not society then
-      print("Error: Society with ID " .. role.getSocietyId() .. " not found for role " .. role.getName())
-      return
-    end
-    local success, message = society.addRole(role)
-    if not success then
-        print("Error: Failed to add role " .. role.getName() .. " to society " .. society.getName() .. ": " .. message)
-    else
-        SocietyRoles[role.getId()] = role
-        print("Role loaded successfully: " .. role.toString())
-    end
+    SocietyRoles[role.getId()] = role
   end
 end
 
 function LoadSocietiesRolesDatas()
-  for k,roleDatas in pairs(Database.roles) do
-    local society = Societies[roleDatas.societyId]
-    if society then
-      for _, role in pairs(society.getRoles()) do
-        role.loadPermissionFromDatabase(roleDatas)
-      end
-    else
-      print("Error: Society with ID " .. roleDatas.societyId .. " not found for role " .. roleDatas.id)
-    end
-  end
+
 end
 
 RegisterCommand("editRoleSalary", function(source, args, rawCommand)

@@ -1,29 +1,16 @@
 LoadIdentities()
 LoadPlayers()
 LoadSocieties()
+LoadSocietyRoles()
+LoadSocietyMembers()
 
 Wait(1000)
 
-LoadSocietiesRoles()
-LoadSocietiesMembers()
 
-Wait(1000)
-
-LoadSocietiesRolesDatas()
 
 for k,v in pairs(Societies) do
+  v.lazyLoading()
   v.generateEventHandler()
-  Wait(1000)
-end
-
-for k,v in pairs(Societies) do
-	TriggerEvent('duck:society:' .. v.getName() .. ':test')
- 	Wait(1000)
-end
-
-for k,v in pairs(Players) do
-  print(v.toString())
-  Wait(1000)
 end
 
 function onRessourceStop(resourceName)

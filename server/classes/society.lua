@@ -29,6 +29,21 @@ function DuckSociety()
     AddEventHandler(self.getFullEventName('test'), self.handlerTest)
   end
 
+  self.lazyLoading = function()
+    for _, role in pairs(SocietyRoles) do
+      if role.getSocietyId() == self.getId() then
+        self.addRole(role)
+        role.lazyLoading()
+      end
+    end
+
+    for k, members in pairs(SocietyMembers) do
+      if members.getSocietyId() == self.getId() then
+        self.addMember(members)
+      end
+    end
+  end
+
 
   self.getEventName = function()
     return 'duck:society:' .. self.getName() .. ':'
