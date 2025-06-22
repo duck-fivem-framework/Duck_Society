@@ -1,3 +1,5 @@
+Players = {}
+
 function DuckPlayer()
     local self = DuckClass(Config.MagicString.KeyStringPlayers)
 
@@ -108,6 +110,15 @@ function DuckPlayer()
         
         self.setMoney(self.getMoney() - amount)
         return true, 'Money removed successfully'
+    end
+
+    self.storeInFile = function(f)
+      f:write("        {\n")
+      f:write("            id = " .. self.getId() .. ",\n")
+      f:write("            identityId = " .. self.getIdentityId() .. ",\n")
+      f:write("            identifier = \"" .. self.getIdentifier() .. "\",\n")
+      f:write("            money = " .. self.getMoney() .. "\n")
+      f:write("        },\n")
     end
 
     return self

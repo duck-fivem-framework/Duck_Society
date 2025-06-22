@@ -1,3 +1,5 @@
+Identities = {}
+
 function DuckIdentity()
     local self = DuckClass(Config.MagicString.KeyStringIdentity)
 
@@ -32,6 +34,15 @@ function DuckIdentity()
 
     self.getFullName = function()
         return string.format("%s %s", self.getFirstname(), self.getLastname())
+    end
+
+    self.storeInFile = function(f)
+      f:write("        {\n")
+      f:write("            id = " .. self.getId() .. ",\n")
+      f:write("            firstname = \"" .. self.getFirstname() .. "\",\n")
+      f:write("            lastname = \"" .. self.getLastname() .. "\",\n")
+      f:write("            dateofbirth = \"" .. self.getDateOfBirth() .. "\"\n")
+      f:write("        },\n")
     end
 
     return self

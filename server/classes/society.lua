@@ -1,3 +1,5 @@
+Societies = {}
+
 function DuckSociety()
 
   local self = DuckClass(Config.MagicString.KeyStringSociety)
@@ -55,7 +57,7 @@ function DuckSociety()
       if v.getPlayer() ~= nil then
         local player = v.getPlayer()
         if player.isOnline() then
-          local money = v.getRole().getMoney()
+          local money = v.getSocietyRole().getMoney()
           if money > 0 then
             player.addMoney(money)
             print(('Sent $%d to player %d in society %s'):format(money, player.getId(), self.getName()))

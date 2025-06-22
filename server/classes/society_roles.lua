@@ -1,7 +1,8 @@
+SocietyRoles = {}
+
 function DuckSocietyRoles()
     local self = DuckClass(Config.MagicString.DuckSocietyRoles)
 
-    self.societyId = nil
     self.salary = 0
     self.isDefault = false
     self.promotableRoles = {}
@@ -10,9 +11,8 @@ function DuckSocietyRoles()
     self = __LoadId(self)
     self = __LoadName(self)
     self = __LoadLabel(self)
+    self = __LoadSociety(self)
 
-    self.setSocietyId = function(societyId) self.societyId = tonumber(societyId) end
-    self.getSocietyId = function() return self.societyId end
     self.setSalary = function(salary) self.salary = tonumber(salary) end
     self.getSalary = function() return self.salary end
     self.setIsDefault = function(isDefault) self.isDefault = isDefault end
@@ -39,7 +39,7 @@ function DuckSocietyRoles()
         local currentRole = nil
         for _, members in pairs(self.getSociety().getMembers()) do
             if members.getPlayerId() == player.getId() then
-                currentRole = members.getRole()
+                currentRole = members.getSocietyRole()
                 break
             end
         end
@@ -96,7 +96,7 @@ function DuckSocietyRoles()
         local currentRole = nil
         for _, members in pairs(self.getSociety().getMembers()) do
             if members.getPlayerId() == player.getId() then
-                currentRole = members.getRole()
+                currentRole = members.getSocietyRole()
                 break
             end
         end
@@ -273,35 +273,6 @@ function DuckSocietyRoles()
         end
     end
 
-    self.setSociety = function(society)
-        if not society or type(society) ~= 'table' then
-            print("Error: Invalid society provided")
-            return false, 'Invalid society provided'
-        end
-
-        if not society.__metas or society.__metas.object ~= Config.MagicString.KeyStringSociety then
-            return false, 'Invalid society object'
-        end
-
-        self.setSocietyId(society.getId())
-        return true, 'Society set successfully'
-    end
-
-    self.getSociety = function()
-        if not self.societyId then
-            print("Error: Society ID is not set")
-            return nil, 'Society ID is not set'
-        end
-
-        local society = Societies[self.societyId]
-        if not society then
-            print("Error: Society not found")
-            return nil, 'Society not found'
-        end
-
-        return society, 'Society retrieved successfully'
-    end
-
     self.toString = function()
         return string.format("DuckSocietyRoles: { id: %d, societyId: %d, name: '%s', label: '%s', salary: %d, isDefault: %s }",
             self.getId(), self.getSocietyId(), self.getName(), self.getLabel(), self.getSalary(), tostring(self.getIsDefault()))
@@ -342,9 +313,10 @@ function LoadSocietiesRoles()
     end
     local success, message = society.addRole(role)
     if not success then
-      print("Error: Failed to add role " .. role.getName() .. " to society " .. society.getName() .. ": " .. message)
+        print("Error: Failed to add role " .. role.getName() .. " to society " .. society.getName() .. ": " .. message)
     else
-      print("Role loaded successfully: " .. role.toString())
+        SocietyRoles[role.getId()] = role
+        print("Role loaded successfully: " .. role.toString())
     end
   end
 end

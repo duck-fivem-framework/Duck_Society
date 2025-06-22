@@ -1,7 +1,3 @@
-Societies = {}
-Identities = {}
-Players = {}
-
 LoadIdentities()
 LoadPlayers()
 LoadSocieties()

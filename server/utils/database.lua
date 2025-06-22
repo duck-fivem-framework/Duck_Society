@@ -31,33 +31,18 @@ function StoreDatabase()
     f:write("    members = {\n")
     for _,society in pairs(Societies) do
         for _,member in pairs(society.getMembers()) do
-            f:write("        {\n")
-            f:write("            id = " .. member.getId() .. ",\n")
-            f:write("            societyId = " .. member.getSocietyId() .. ",\n")
-            f:write("            roleId = " .. member.getRoleId() .. ",\n")
-            f:write("            playerId = " .. member.getPlayerId() .. "\n")
-            f:write("        },\n")
+            member.storeInFile(f)
         end
     end
     f:write("    },\n")
     f:write("    identities = {\n")
     for _,identity in pairs(Identities) do
-      f:write("        {\n")
-      f:write("            id = " .. identity.getId() .. ",\n")
-      f:write("            firstname = \"" .. identity.getFirstname() .. "\",\n")
-      f:write("            lastname = \"" .. identity.getLastname() .. "\",\n")
-      f:write("            dateofbirth = \"" .. identity.getDateOfBirth() .. "\"\n")
-      f:write("        },\n")
+      identity.storeInFile(f)
     end
     f:write("    },\n")
     f:write("    players = {\n")
     for _,player in pairs(Players) do
-      f:write("        {\n")
-      f:write("            id = " .. player.getId() .. ",\n")
-      f:write("            identityId = " .. player.getIdentityId() .. ",\n")
-      f:write("            identifier = \"" .. player.getIdentifier() .. "\",\n")
-      f:write("            money = " .. player.getMoney() .. "\n")
-      f:write("        },\n")
+      player.storeInFile(f)
     end
     f:write("   }\n")
     f:write("}\n")

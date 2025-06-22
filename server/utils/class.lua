@@ -32,3 +32,11 @@ function DuckClass(name)
     return self
 
 end
+
+function __IsModel(object, model)
+    if type(object) ~= 'table' or not object.__metas or not object.__metas.object then
+        return false
+    end
+
+    return object.__metas.object == model
+end

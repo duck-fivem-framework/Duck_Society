@@ -1,16 +1,14 @@
+SocietyMembers = {}
+
 function DuckSocietyMembers()
     local self = DuckClass(Config.MagicString.KeyStringMembers)
 
-    self.societyId = nil
-    self.roleId = nil
     self.playerId = nil
 
     self = __LoadId(self)
+    self = __LoadSociety(self)
+    self = __LoadSocietyRole(self)
 
-    self.setSocietyId = function(societyId) self.societyId = tonumber(societyId) end
-    self.getSocietyId = function() return self.societyId end
-    self.setRoleId = function(roleId) self.roleId = tonumber(roleId) end
-    self.getRoleId = function() return self.roleId end
     self.setPlayerId = function(playerId) self.playerId = tonumber(playerId) end
     self.getPlayerId = function() return self.playerId end
 
@@ -18,70 +16,11 @@ function DuckSocietyMembers()
         if data then
             self.setId(data.id)
             self.setSocietyId(data.societyId)
-            self.setRoleId(data.roleId)
+            self.setSocietyRoleId(data.roleId)
             self.setPlayerId(data.playerId)
         else
             print("Error: No data provided to load DuckSocietyMembers")
         end
-    end
-
-    self.getSociety = function()
-        if not self.societyId then
-            print("Error: Society ID is not set")
-            return nil, 'Society ID is not set'
-        end
-
-        local society = Societies[self.societyId]
-        if not society then
-            print("Error: Society not found")
-            return nil, 'Society not found'
-        end
-
-        return society, 'Society retrieved successfully'
-    end
-
-    self.getRole = function()
-        if not self.roleId then
-            print("Error: Role ID is not set")
-            return nil, 'Role ID is not set'
-        end
-
-        local society = self.getSociety()
-        if not society then
-            print("Error: Society not found")
-            return nil, 'Society not found'
-        end
-
-
-
-        for _, role in pairs(self.getSociety().getRoles()) do
-            if role.getId() == self.roleId then
-                return role, 'Role retrieved successfully'
-            end
-        end
-
-        print("Error: Role not found in society")
-        return nil, 'Role not found in society'
-    end
-
-    self.setRole = function(role)
-        if type(role) ~= 'table' or not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
-            print("Error: Invalid role object")
-            return false, 'Invalid role object'
-        end
-
-        self.setRoleId(role.getId())
-        return true, 'Role set successfully'
-    end
-
-    self.setSociety = function(society)
-        if type(society) ~= 'table' or not society.__metas or society.__metas.object ~= Config.MagicString.KeyStringSociety then
-            print("Error: Invalid society object")
-            return false, 'Invalid society object'
-        end
-
-        self.setSocietyId(society.getId())
-        return true, 'Society set successfully'
     end
 
     self.getPlayer = function()
@@ -111,7 +50,16 @@ function DuckSocietyMembers()
     
     self.toString = function()
         return string.format("DuckSocietyMembers: { id: %d, societyId: %d, roleId: %d, playerId: %d }",
-            self.getId(), self.getSocietyId(), self.getRoleId(), self.getPlayerId())
+            self.getId(), self.getSocietyId(), self.getSocietyRoleIdId(), self.getPlayerId())
+    end
+
+    self.storeInFile = function(f)
+        f:write("        {\n")
+        f:write("            id = " .. self.getId() .. ",\n")
+        f:write("            societyId = " .. self.getSocietyId() .. ",\n")
+        f:write("            roleId = " .. self.getSocietyRoleId() .. ",\n")
+        f:write("            playerId = " .. self.getPlayerId() .. "\n")
+        f:write("        },\n")
     end
 
     return self
@@ -123,6 +71,7 @@ function LoadSocietiesMembers()
         member.loadFromDatabase(v)
         if Societies[member.getSocietyId()] then
             Societies[member.getSocietyId()].addMember(member)
+            SocietyMembers[member.getId()] = member
         else
             print("Error: Society with ID " .. member.getSocietyId() .. " not found for member " .. member.getId())
         end
