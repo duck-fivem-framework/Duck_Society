@@ -10,6 +10,7 @@ function DuckSociety()
   self = __LoadId(self)
   self = __LoadName(self)
   self = __LoadLabel(self)
+  self = __LoadAccounts(self)
     
   self.handlerTest = function()
     print(self.toString())
@@ -43,6 +44,15 @@ function DuckSociety()
     for k, members in pairs(SocietyMembers) do
       if members.getSocietyId() == self.getId() then
         self.addMember(members)
+      end
+    end
+
+    for _, account in pairs(Accounts) do
+      if account.getOwnerType() == self.__metas.object and account.getOwnerId() == self.getId() then
+        local compatibility, errorMessage = self.addAccount(account)
+        if not compatibility then
+          print(('Error adding account %s to society %s: %s'):format(account.getName(), self.getName(), errorMessage))
+        end
       end
     end
   end

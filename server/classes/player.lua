@@ -3,26 +3,12 @@ Players = {}
 function DuckPlayer()
     local self = DuckClass(Config.MagicString.KeyStringPlayers)
 
-    self.identifier = nil
-    self.identityId = nil
-
-    self.money = 0
-    self.online = false
-    self.source = nil -- This will hold the source of the player, if applicable
-
     self = __LoadId(self)
-
-    self.setIdentifier = function(identifier) self.identifier = identifier end
-    self.getIdentifier = function() return self.identifier end
-    self.setMoney = function(money) self.money = tonumber(money) end
-    self.getMoney = function() return self.money end
-    self.setOnline = function(online) self.online = online end
-    self.isOnline = function() return self.online end
-    self.setSource = function(source) self.source = source end
-    self.getSource = function() return self.source end
-    self.getIdentityId = function() return self.identityId end
-    self.setIdentityId = function(identityId) self.identityId = tonumber(identityId) end
-
+    self = __LoadAccounts(self)
+    self = __LoadIdentity(self)
+    self = __LoadIdentifier(self)
+    self = __LoadSource(self)
+    self = __LoadOnline(self)
 
     self.loadFromDatabase = function(data)
         if data then
@@ -36,80 +22,28 @@ function DuckPlayer()
                     print("Error: Identity not found for ID " .. tostring(data.identityId))
                 end
             end
-            self.setMoney(data.money or 0) -- Default to 0 if money is not provided
         else
             print("Error: No data provided to load DuckPlayers")
         end
     end
 
-
-    self.getIdentity = function()
-        if not self.identityId then
-            print("Error: Identity ID is not set")
-            return nil, 'Identity ID is not set'
+    self.lazyLoading = function()
+        for _, account in pairs(Accounts) do
+            if account.getOwnerType() == self.__metas.object and account.getOwnerId() == self.getId() then
+                local compatibility, errorMessage = self.addAccount(account)
+                if not compatibility then
+                    print("Error: " .. errorMessage)
+                else
+                    print("Account added successfully for player ID " .. self.getId())
+                end
+            end
         end
-
-        local identity = Identities[self.identityId]
-        if not identity then
-            print("Error: Identity not found")
-            return nil, 'Identity not found'
-        end
-
-        return identity, 'Identity retrieved successfully'
-    end
-
-    self.setIdentity = function(identity)
-        if not identity or type(identity) ~= 'table' then
-            print("Error: Invalid identity provided")
-            return false, 'Invalid identity provided'
-        end
-
-        if not identity.__metas or identity.__metas.object ~= Config.MagicString.KeyStringIdentity then
-            return false, 'Invalid identity object'
-        end
-
-        self.identityId = identity.getId()
-        return true, 'Identity set successfully'
     end
 
     self.toString = function()
         return string.format("DuckPlayer: { id: %d, identifier: '%s', money: %d, identity: %s}",
             self.getId(), self.getIdentifier(), self.getMoney(),
             self.identityId and self.getIdentity().getFullName() or 'nil')
-    end
-
-    self.addMoney = function(amount)
-        if type(amount) ~= 'number' then
-            print("Error: Amount must be a number")
-            return false, 'Amount must be a number'
-        end
-        local newMoney = self.getMoney() + amount < 0
-        if newMoney < 0 then
-            self.setMoney(0)
-            return true, 'Money cannot be negative, set to 0'
-        end
-        self.setMoney(self.getMoney() + amount)
-        return true, 'Money added successfully'
-    end
-
-    self.removeMoney = function(amount)
-        if type(amount) ~= 'number' then
-            print("Error: Amount must be a number")
-            return false, 'Amount must be a number'
-        end
-        local newMoney = self.getMoney() - amount < 0
-        if newMoney < 0 then
-            self.setMoney(0)
-            return true, 'Money cannot be negative, set to 0'
-        end
-
-        if newMoney > self.getMoney() then
-            print("Error: Not enough money to remove")
-            return false, 'Not enough money to remove'
-        end
-        
-        self.setMoney(self.getMoney() - amount)
-        return true, 'Money removed successfully'
     end
 
     self.storeInFile = function(f)
