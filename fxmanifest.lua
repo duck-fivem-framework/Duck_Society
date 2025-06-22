@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Knard'
 description 'Duck_Society - Gestion des sociétés'
-version '1.0.0'
+version '1.1.0'
 
 shared_scripts {
     'shared/config.lua',
@@ -15,13 +15,7 @@ client_scripts {
 
 server_scripts {
     'server/protos/*.lua',
-    'shared/database.lua',
-    'server/database.lua',
-    'server/account.lua',
-    'server/society_roles.lua',
-    'server/society_members.lua',
-    'server/society.lua',
-    'server/identity.lua',
-    'server/player.lua',
+    'server/utils/*.lua',
+    'server/classes/*.lua',
     'server/main.lua',
 }
