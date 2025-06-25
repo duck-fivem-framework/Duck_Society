@@ -1,5 +1,3 @@
-Accounts = {}
-
 function DuckAccouunt()
 
     local self = DuckClass(Config.MagicString.KeyStringAccount)
@@ -65,12 +63,4 @@ function DuckAccouunt()
     end
 
     return self
-end
-
-function LoadAccountsFromDatabase()
-    for k,v in pairs(Database.accounts) do
-        local account = DuckAccouunt()
-        account.loadFromDatabase(v)
-        Accounts[account.getId()] = account
-    end
 end

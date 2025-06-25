@@ -28,6 +28,7 @@ function DuckClass(name)
         return nil, 'Invalid class metadata'
     end
 
+    self.__metas.isModel = __IsModel
 
     return self
 
@@ -35,8 +36,14 @@ end
 
 function __IsModel(object, model)
     if type(object) ~= 'table' or not object.__metas or not object.__metas.object then
-        return false
+        return false, 'Invalid object provided for model verification'
     end
 
-    return object.__metas.object == model
+    local result = object.__metas.object == model
+    if not result then
+        print("Error: Object is not a valid model")
+        return false, 'Object is not a valid model of type ' .. model
+    end
+
+    return true, 'Object is a valid model of type ' .. model
 end
