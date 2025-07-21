@@ -1,4 +1,4 @@
-function DuckAccouunt()
+function DuckAccount()
 
     local self = DuckClass(Config.MagicString.KeyStringAccount)
 
@@ -8,6 +8,7 @@ function DuckAccouunt()
     self =  __LoadBalance(self)
     self =  __LoadIban(self)
     self =  __LoadUsage(self)
+    self =  __LoadTransactions(self)
 
     self.loadFromDatabase = function(data)
         if data then

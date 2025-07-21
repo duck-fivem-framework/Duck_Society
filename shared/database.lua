@@ -5,6 +5,7 @@ Database = {
     maxIdentityId = 4,
     maxPlayerId = 4,
     maxAccountId = 6, -- Assuming no accounts are used in this example
+    maxTransactionId = 1, -- Assuming no transactions are used in this example
     accounts = {
         {
             id = 1,
@@ -192,6 +193,19 @@ Database = {
             identifier = "steam:110000000000004",
             money = 25000,
         }
+    },
+    transactions = {
+        {
+            id = 1,
+            owner_type = Config.MagicString.KeyStringAccount,
+            owner_id = 4,
+            target_type = Config.MagicString.KeyStringAccount,
+            target_id = 1,
+            balance = 1000.0,
+            label = "Payment for services",
+            payed_at = nil,
+            refunded = false,
+            refunded_at = nil,
+        }
     }
-
 }

@@ -48,9 +48,6 @@ function DuckTransaction()
         f:write("        },\n")
     end
 
-    self.lazyLoading = function()
-        
-    end
 
     self.pay = function()
         if not self.getPayedAt() then

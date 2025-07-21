@@ -3,6 +3,7 @@ LoadPlayers()
 LoadSocieties()
 LoadSocietyRoles()
 LoadSocietyMembers()
+LoadAccountsFromDatabase()
 
 Wait(1000)
 
