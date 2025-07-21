@@ -45,6 +45,14 @@ function __LoadOwner(object)
                     print("Error: Society not found")
                     return nil, 'Society not found'
                 end
+            elseif object.getOwnerType() == Config.MagicString.KeyStringAccount then
+                local account = Accounts[object.getOwnerId()]
+                if account then
+                    return account, 'Account retrieved successfully'
+                else
+                    print("Error: Account not found")
+                    return nil, 'Account not found'
+                end
             else
                 print("Error: Invalid owner type")
                 return nil, 'Invalid owner type'

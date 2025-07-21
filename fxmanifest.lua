@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Knard'
 description 'Duck_Society - Gestion des sociétés'
-version '1.1.0'
+version '1.2.0'
 
 shared_scripts {
     'shared/config.lua',

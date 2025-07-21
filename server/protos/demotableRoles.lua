@@ -1,23 +1,20 @@
-function __LoadPromotableRoles(object)
+function __LoadDemotableRoles(object)
 
     if not object or type(object) ~= 'table' then
         return object
     end
 
-    object.promotableRoles = {}
+    object.demotableRoles = {}
 
-    if not object.setPromotableRoles then
-        object.setPromotableRoles = function(roles)
+    if not object.setDemotableRoles then
+        object.setDemotableRoles = function(roles)
             if type(roles) ~= 'table' then
                 print("Error: Roles must be a table")
                 return false, 'Roles must be a table'
             end
 
-
             for _, role in pairs(roles) do
-                if object.metas.isModel(role, Config.MagicString.KeyStringRole) then
-                    -- skip row
-                else
+                if not object.metas.isModel(role, Config.MagicString.KeyStringRole) then
                     print("Error: Invalid role object inside roles table")
                     return false, 'Invalid role object inside roles table'
                 end
@@ -28,19 +25,19 @@ function __LoadPromotableRoles(object)
                 end
             end
 
-            object.promotableRoles = roles
-            return true, 'Promotable roles set successfully'
+            object.demotableRoles = roles
+            return true, 'Demotable roles set successfully'
         end
     end
 
-    if not object.getPromotableRoles then
-        object.getPromotableRoles = function()
-            return object.promotableRoles
+    if not object.getDemotableRoles then
+        object.getDemotableRoles = function()
+            return object.demotableRoles
         end
     end
-    
-    if not object.addPromotableRole then
-        object.addPromotableRole = function(role)
+
+    if not object.addDemotableRole then
+        object.addDemotableRole = function(role)
             if not object.metas.isModel(role, Config.MagicString.KeyStringRole) then
                 print("Error: Invalid role object")
                 return false, 'Invalid role object'
@@ -51,17 +48,18 @@ function __LoadPromotableRoles(object)
                 return false, 'Role does not belong to the same society'
             end
 
-            if object.promotableRoles[role.getId()] then
-                print("Error: Role already exists in promotable roles")
-                return false, 'Role already exists in promotable roles'
+            if object.demotableRoles[role.getId()] then
+                print("Error: Role already exists in demotable roles")
+                return false, 'Role already exists in demotable roles'
             end
-            object.promotableRoles[role.getId()] = role
-            return true, 'Promotable role added successfully'
+
+            object.demotableRoles[role.getId()] = role
+            return true, 'Demotable role added successfully'
         end
     end
 
-    if not object.removePromotableRole then
-        object.removePromotableRole = function(role)
+    if not object.removeDemotableRole then
+        object.removeDemotableRole = function(role)
             if not object.metas.isModel(role, Config.MagicString.KeyStringRole) then
                 print("Error: Invalid role object")
                 return false, 'Invalid role object'
@@ -72,27 +70,27 @@ function __LoadPromotableRoles(object)
                 return false, 'Role does not belong to the same society'
             end
 
-            if not object.promotableRoles[role.getId()] then
-                print("Error: Role not found in promotable roles")
-                return false, 'Role not found in promotable roles'
+            if not object.demotableRoles[role.getId()] then
+                print("Error: Role not found in demotable roles")
+                return false, 'Role not found in demotable roles'
             end
 
-            object.promotableRoles[role.getId()] = nil
-            return true, 'Promotable role removed successfully'
+            object.demotableRoles[role.getId()] = nil
+            return true, 'Demotable role removed successfully'
         end
     end
 
-    if not object.getPromotableRole then
-        object.getPromotableRole = function(role)
+    if not object.getDemotableRole then
+        object.getDemotableRole = function(role)
             if not object.metas.isModel(role, Config.MagicString.KeyStringRole) then
                 print("Error: Invalid role object")
                 return nil, 'Invalid role object'
             end
 
             local roleId = role.getId()
-            if not object.promotableRoles[roleId] then
-                print("Error: Role not found in promotable roles")
-                return nil, 'Role not found in promotable roles'
+            if not object.demotableRoles[roleId] then
+                print("Error: Role not found in demotable roles")
+                return nil, 'Role not found in demotable roles'
             end
 
             if role.getSocietyId() ~= object.getSocietyId() then
@@ -100,16 +98,16 @@ function __LoadPromotableRoles(object)
                 return nil, 'Role does not belong to the same society'
             end
 
-            return role, 'Promotable role retrieved successfully'
+            return role, 'Demotable role retrieved successfully'
         end
     end
 
-    if not object.canPromotePlayer then
-        object.canPromotePlayer = function(role, player, member)
-            local isValid = object.getPromotableRole(role)
+    if not object.canDemotePlayer then
+        object.canDemotePlayer = function(role, player, member)
+            local isValid = object.getDemotableRole(role)
             if not isValid then
-                print("Error: Role is not promotable")
-                return false, 'Role is not promotable'
+                print("Error: Role is not demotable")
+                return false, 'Role is not demotable'
             end
             local isPlayer = object.metas.isModel(player, Config.MagicString.KeyStringPlayer)
             if not isPlayer then
@@ -122,27 +120,25 @@ function __LoadPromotableRoles(object)
                 return false, 'Invalid member object'
             end
 
-
-
             if not member then
                 print("Error: Player is not a member of the society")
                 return false, 'Player is not a member of the society'
             end
 
-            local canPromotePlayer = object.getPromotableRole(member.getRole())
-            if not canPromotePlayer then
-                print("Error: Player cannot be promoted to this role")
-                return false, 'Player cannot be promoted to this role'
+            local canDemote = object.getDemotableRole(member.getRole())
+            if not canDemote then
+                print("Error: Player cannot be demoted to this role")
+                return false, 'Player cannot be demoted to this role'
             end
 
             return true
         end
     end
 
-    if not object.promotePlayerRole then
-        object.promotePlayerRole = function(role, player)
+    if not object.demotePlayerRole then
+        object.demotePlayerRole = function(role, player)
             local member = nil
-            for k,v in pairs(object.getSociet().getMembers()) do
+            for _, v in pairs(object.getSociet().getMembers()) do
                 if v.getPlayerId() == player.getId() then
                     member = v
                     break
@@ -153,15 +149,16 @@ function __LoadPromotableRoles(object)
                 print("Error: Player is not a member of the society")
                 return false, 'Player is not a member of the society'
             end
-            local isValid, message = object.canPromotePlayer(role, player, member)
+
+            local isValid, message = object.canDemotePlayer(role, player, member)
             if not isValid then
                 return false, message
             end
+
             member.setRole(role)
-            return true, 'Player promoted successfully'
+            return true, 'Player demoted successfully'
         end
     end
-
 
     return object
 end

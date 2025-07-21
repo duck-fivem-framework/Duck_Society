@@ -2,21 +2,12 @@ function DuckAccouunt()
 
     local self = DuckClass(Config.MagicString.KeyStringAccount)
 
-
-    self.balance = 0.0 -- Balance of the account
-    self.usage = nil -- 'player' or 'society_bank' or 'player_bank' or 
-    self.iban = nil -- International Bank Account Number (IBAN) for the account
-
     self = __LoadId(self)
     self = __LoadOwner(self)
     self = __LoadLabel(self)
-
-    self.setBalance = function(balance) self.balance = tonumber(balance) end
-    self.getBalance = function() return self.balance end
-    self.setUsage = function(usage) self.usage = usage end
-    self.getUsage = function() return self.usage end
-    self.setIban = function(iban) self.iban = iban end
-    self.getIban = function() return self.iban end
+    self =  __LoadBalance(self)
+    self =  __LoadIban(self)
+    self =  __LoadUsage(self)
 
     self.loadFromDatabase = function(data)
         if data then
