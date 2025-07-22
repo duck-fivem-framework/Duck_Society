@@ -49,6 +49,18 @@ function DuckAccount()
         end
     end
 
+    self.storeInFile = function(f)
+        f:write("        {\n")
+        f:write("            id = " .. self.getId() .. ",\n")
+        f:write("            label = \"" .. self.getLabel() .. "\",\n")
+        f:write("            owner_type = \"" .. tostring(self.getOwnerType()) .. "\",\n")
+        f:write("            owner_id = " .. self.getOwnerId() .. ",\n")
+        f:write("            balance = " .. self.getBalance() .. ",\n")
+        f:write("            usage = \"" .. tostring(self.getUsage()) .. "\",\n")
+        f:write("            iban = \"" .. tostring(self.getIban()) .. "\"\n")
+        f:write("        },\n")
+    end
+
     self.toString = function()
         return string.format("DuckAccount: { id: %d, owner_type: '%s', owner_id: %d, balance: %.2f, usage: '%s', iban: '%s', label: '%s' }",
             self.getId(), self.getOwnerType(), self.getOwnerId(), self.getBalance(), self.getUsage(), self.getIban(), self.getLabel())

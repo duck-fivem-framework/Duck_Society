@@ -55,6 +55,11 @@ function StoreDatabase()
       player.storeInFile(f)
     end
     f:write("   },\n")
+    f:write("    accounts = {\n")
+    for _,account in pairs(Accounts) do
+      account.storeInFile(f)
+    end
+    f:write("   },\n")
     f:write("    transactions = {\n")
     for _,transaction in pairs(Transactions) do
       transaction.storeInFile(f)
