@@ -25,7 +25,7 @@ function __LoadTransactions(object)
 
     if not object.addTransaction then
         object.addTransaction = function(transaction)
-            if not transaction.metas.isModel(transaction, Config.MagicString.KeyStringTransaction) then
+            if not transaction.__metas.isModel(transaction, Config.MagicString.KeyStringTransaction) then
                 print("Error: Invalid transaction object")
                 return false, 'Invalid transaction object'
             end
