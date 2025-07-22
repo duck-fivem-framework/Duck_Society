@@ -9,5 +9,6 @@ Config.MagicString = {
     KeyStringIdentity = "DuckIdentity",
     KeyStringAccount = "DuckAccount",
     KeyStringTransaction = "DuckTransaction",
+    KeyStringPermission = "DuckPermission",
 }
 

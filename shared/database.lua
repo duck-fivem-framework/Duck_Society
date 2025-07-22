@@ -6,6 +6,7 @@ Database = {
     maxPlayerId = 4,
     maxAccountId = 6, -- Assuming no accounts are used in this example
     maxTransactionId = 1, -- Assuming no transactions are used in this example
+    maxPermissionId = 1, -- Assuming no permissions are used in this example
     accounts = {
         {
             id = 1,
@@ -211,6 +212,14 @@ Database = {
             payed_at = nil,
             refunded = false,
             refunded_at = nil,
+        }
+    },
+    permissions = {
+        {
+            id = 1,
+            name = "bank_notification",
+            label = "Bank Notification",
+            description = "Allows the entity to receive bank notifications.",
         }
     }
 }
