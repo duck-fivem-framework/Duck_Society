@@ -55,6 +55,11 @@ function StoreDatabase()
       player.storeInFile(f)
     end
     f:write("   },\n")
+    f:write("    permissions = {\n")
+    for _,permission in pairs(Permissions) do
+      permission.storeInFile(f)
+    end
+    f:write("   },\n")
     f:write("    accounts = {\n")
     for _,account in pairs(Accounts) do
       account.storeInFile(f)
