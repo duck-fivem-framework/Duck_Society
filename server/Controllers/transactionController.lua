@@ -5,6 +5,7 @@ function LoadTransactionsFromDatabase()
         local transaction = DuckTransaction()
         transaction.loadFromDatabase(v)
         Transactions[transaction.getId()] = transaction
+        print("Loaded transaction: " .. transaction.toString())
     end
 end
 
@@ -13,30 +14,40 @@ local function Notificate(transaction)
         print("Error: Transaction is nil")
         return
     end
-    if not transaction.metas.isModel(transaction, Config.MagicString.KeyStringTransaction) then
+    if not transaction.__metas.isModel(transaction, Config.MagicString.KeyStringTransaction) then
         print("Error: Invalid transaction object")
         return
     end
 
-    local owner = Accounts[transaction.getOwnerId()]
-    local target = Accounts[transaction.getTargetId()]
-    if owner.getOwner().isModel(owner, Config.MagicString.KeyStringPlayers) then
-        local player = owner.getOwner().getPlayer()
+    local owner = transaction.getOwner()
+    if not owner then
+        print("Error: Owner is not set or invalid")
+        return
+    end
+
+    local target = transaction.getTarget()
+    if not target then
+        print("Error: Target is not set or invalid")
+        return
+    end
+
+    if owner.getOwnerType() ==  Config.MagicString.KeyStringPlayers then
+        local player = owner.getOwner()
         if player.isOnline() then
             print(string.format("Transaction from %s to %s: %s", owner.getIban(), target.getIban(), transaction.getBalance()))
         end
     end
-    if target.getOwner().isModel(target, Config.MagicString.KeyStringPlayers) then
-        local player = target.getOwner().getPlayer()
+    if target.getOwnerType() ==  Config.MagicString.KeyStringPlayers then
+        local player = target.getOwner()
         if player.isOnline() then
             print(string.format("Transaction from %s to %s: %s", owner.getIban(), target.getIban(), transaction.getBalance()))
         end
     end
-    if owner.getOwner().isModel(owner, Config.MagicString.KeyStringSociety) then
-        owner.getOwner().getSociety().notificateBank(owner, target, transaction)
+    if owner.getOwnerType() ==  Config.MagicString.KeyStringSociety then
+        owner.getOwner().notificateBank(owner, target, transaction)
     end
-    if owner.getTarget().isModel(owner, Config.MagicString.KeyStringSociety) then
-        target.getOwner().getSociety().notificateBank(owner, target, transaction)
+    if target.getOwnerType() ==  Config.MagicString.KeyStringSociety then
+        target.getOwner().notificateBank(owner, target, transaction)
     end
 end
 
@@ -77,9 +88,10 @@ RegisterCommand('createNewTransaction', function(source, args, rawCommand)
     transaction.setOwnerType(Config.MagicString.KeyStringAccount)
     transaction.setTargetType(Config.MagicString.KeyStringAccount)
     transaction.setOwnerId(fromAccountId)
-    transaction.setBalance(amount)
     transaction.setTargetId(toAccountId)
+    transaction.setBalance(amount)
     transaction.setLabel(label)
+    transaction.setId(Database.maxTransactionId + 1)
     Transactions[transaction.getId()] = transaction
 
     print("Transaction created successfully: " .. transaction.toString())

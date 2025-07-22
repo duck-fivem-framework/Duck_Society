@@ -82,6 +82,7 @@ Database = {
             label = "Officer",
             salary = 5000,
             isDefault = true,
+            bankNotification = false
         },
         {
             id = 2,
@@ -89,7 +90,8 @@ Database = {
             name = "sergeant",
             label = "Sergeant",
             salary = 7000,
-            isDefault = false
+            isDefault = false,
+            bankNotification = false
         },
         {
             id = 3,
@@ -97,7 +99,8 @@ Database = {
             name = "chief",
             label = "Chief",
             salary = 10000,
-            isDefault = false
+            isDefault = false,
+            bankNotification = true
         },
         {
             id = 4,
@@ -105,7 +108,8 @@ Database = {
             name = "paramedic",
             label = "Paramedic",
             salary = 4500,
-            isDefault = true
+            isDefault = true,
+            bankNotification = false
         },
         {
             id = 5,
@@ -113,7 +117,8 @@ Database = {
             name = "doctor",
             label = "Doctor",
             salary = 8000,
-            isDefault = false
+            isDefault = false,
+            bankNotification = true
         }
     },
     members = {

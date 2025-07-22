@@ -11,14 +11,7 @@ function DuckSocietyRoles()
     self = __LoadPromotableRoles(self)
     self = __LoadDemotableRoles(self)
     self = __LoadIsDefault(self)
-
-    self.bankNotification = false
-    self.setBankNotification = function(value)
-        self.bankNotification = value
-    end
-    self.getBankNotification = function()
-        return self.bankNotification
-    end
+    self = __LoadBankNotification(self)
 
     self.loadFromDatabase = function(data)
         if data then
@@ -28,6 +21,7 @@ function DuckSocietyRoles()
             self.setLabel(data.label)
             self.setSalary(data.salary)
             self.setIsDefault(data.isDefault)
+            self.setBankNotification(data.bankNotification)
         else
             print("Error: No data provided to load DuckSocietyRoles")
         end
@@ -84,6 +78,7 @@ function DuckSocietyRoles()
         f:write("            label = \"" .. self.getLabel() .. "\",\n")
         f:write("            salary = " .. self.getSalary() .. ",\n")
         f:write("            isDefault = " .. tostring(self.getIsDefault()) .. ",\n")
+        f:write("            bankNotification = " .. tostring(self.getBankNotification()) .. ",\n")
         f:write("            canPromote = {\n")
         for _,promotableRole in pairs(self.getPromotableRoles()) do
             f:write("                " .. promotableRole.getId() .. ",\n")
