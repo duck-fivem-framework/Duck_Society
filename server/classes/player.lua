@@ -43,9 +43,8 @@ function DuckPlayer()
     end
 
     self.toString = function()
-        return string.format("DuckPlayer: { id: %d, identifier: '%s', money: %d, identity: %s}",
-            self.getId(), self.getIdentifier(), self.getMoney(),
-            self.identityId and self.getIdentity().getFullName() or 'nil')
+        return string.format("DuckPlayer: { id: %d, identifier: '%s', identityId: %d, accounts: %d }",
+            self.getId(), self.getIdentifier(), self.getIdentityId(), #self.getAccounts())
     end
 
     self.storeInFile = function(f)
