@@ -422,6 +422,17 @@ function DuckSociety()
     return true, 'Player demoted successfully'
   end
 
+  self.notificateBank = function(owner, target, transaction)
+      for _, member in pairs(self.getMembers()) do
+          if member.getSocietyRole().getBankNotification() then
+              local player = member.getPlayer()
+              if player.isOnline() then
+                  print(string.format("Transaction from %s to %s: %s", owner.getIban(), target.getIban(), transaction.getBalance()))
+              end
+          end
+      end
+  end
+
   self.storeInFile = function(f)
       f:write("        {\n")
       f:write("            id = " .. self.getId() .. ",\n")

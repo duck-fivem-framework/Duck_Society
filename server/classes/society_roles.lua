@@ -12,6 +12,14 @@ function DuckSocietyRoles()
     self = __LoadDemotableRoles(self)
     self = __LoadIsDefault(self)
 
+    self.bankNotification = false
+    self.setBankNotification = function(value)
+        self.bankNotification = value
+    end
+    self.getBankNotification = function()
+        return self.bankNotification
+    end
+
     self.loadFromDatabase = function(data)
         if data then
             self.setId(data.id)

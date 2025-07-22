@@ -4,6 +4,7 @@ LoadSocieties()
 LoadSocietyRoles()
 LoadSocietyMembers()
 LoadAccountsFromDatabase()
+LoadTransactionsFromDatabase()
 
 Wait(1000)
 

@@ -25,6 +25,7 @@ function StoreDatabase()
     f:write("    maxIdentityId = " .. Database.maxIdentityId .. ",\n")
     f:write("    maxPlayerId = " .. Database.maxPlayerId .. ",\n")
     f:write("    maxAccountId = " .. Database.maxAccountId .. ",\n")
+    f:write("    maxTransactionId = " .. Database.maxTransactionId .. ",\n")
     f:write("    societies = {\n")
     for _,society in pairs(Societies) do
       society.storeInFile(f)
@@ -52,6 +53,11 @@ function StoreDatabase()
     f:write("    players = {\n")
     for _,player in pairs(Players) do
       player.storeInFile(f)
+    end
+    f:write("   },\n")
+    f:write("    transactions = {\n")
+    for _,transaction in pairs(Transactions) do
+      transaction.storeInFile(f)
     end
     f:write("   }\n")
     f:write("}\n")
