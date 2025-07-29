@@ -12,7 +12,6 @@ function DuckSocietyRoles()
     self = __LoadDemotableRoles(self)
     self = __LoadIsDefault(self)
     self = __LoadBankNotification(self)
-    self = __LoadPermissions(self)
 
     self.loadFromDatabase = function(data)
         if data then

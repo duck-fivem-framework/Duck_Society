@@ -5,7 +5,6 @@ LoadSocietyRoles()
 LoadSocietyMembers()
 LoadAccountsFromDatabase()
 LoadTransactionsFromDatabase()
-LoadPermissionsFromDatabase()
 
 Wait(1000)
 

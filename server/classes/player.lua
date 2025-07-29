@@ -7,13 +7,20 @@ function DuckPlayer()
     self = __LoadIdentifier(self)
     self = __LoadSource(self)
     self = __LoadOnline(self)
+    self = __LoadLocation(self)
+    self.location = DuckLocation()
 
     self.loadFromDatabase = function(data)
         if data then
             self.setId(data.id)
             self.setIdentifier(data.identifier)
             self.setIdentityId(data.identityId)
-
+            if data.location then
+                self.getLocation().setX(data.location.x)
+                self.getLocation().setY(data.location.y)
+                self.getLocation().setZ(data.location.z)
+                self.getLocation().setHeading(data.location.heading)
+            end
         else
             print("Error: No data provided to load DuckPlayers")
         end
@@ -43,8 +50,9 @@ function DuckPlayer()
     end
 
     self.toString = function()
-        return string.format("DuckPlayer: { id: %d, identifier: '%s', identityId: %d, accounts: %d }",
-            self.getId(), self.getIdentifier(), self.getIdentityId(), #self.getAccounts())
+        return string.format("DuckPlayer: { id: %d, identifier: '%s', money: %d, identity: %s}",
+            self.getId(), self.getIdentifier(), self.getMoney(),
+            self.identityId and self.getIdentity().getFullName() or 'nil')
     end
 
     self.storeInFile = function(f)
@@ -52,6 +60,14 @@ function DuckPlayer()
       f:write("            id = " .. self.getId() .. ",\n")
       f:write("            identityId = " .. self.getIdentityId() .. ",\n")
       f:write("            identifier = \"" .. self.getIdentifier() .. "\",\n")
+      if self.getLocation().getX() ~= nil then
+        f:write("            location = {\n")
+        f:write("                x = " .. self.getLocation().getX() .. ",\n")
+        f:write("                y = " .. self.getLocation().getY() .. ",\n")
+        f:write("                z = " .. self.getLocation().getZ() .. ",\n")
+        f:write("                heading = " .. self.getLocation().getHeading() .. "\n")
+        f:write("            },\n")
+      end
       f:write("        },\n")
     end
 

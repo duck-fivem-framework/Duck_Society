@@ -2,67 +2,10 @@ Database = {
     maxSocityId = 2,
     maxMemberId = 4,
     maxRoleId = 5,
-    maxIdentityId = 4,
-    maxPlayerId = 4,
-    maxAccountId = 6, -- Assuming no accounts are used in this example
-    maxTransactionId = 1, -- Assuming no transactions are used in this example
-    maxPermissionId = 1, -- Assuming no permissions are used in this example
-    accounts = {
-        {
-            id = 1,
-            owner_type = Config.MagicString.KeyStringPlayers,
-            owner_id = 1,
-            balance = 10000.0,
-            usage = "player_bank", --Example : Society, Player, player_bank
-            label = "John's Account",
-            iban = "AAAA-1234-5678-9012",
-        },
-        {
-            id = 2,
-            owner_type = Config.MagicString.KeyStringPlayers,
-            owner_id = 2,
-            balance = 15000.0,
-            usage = "player_bank",
-            label = "Jane's Account",
-            iban = "BBBB-1234-5678-9012",
-        },
-        {
-            id = 3,
-            owner_type = Config.MagicString.KeyStringSociety,
-            owner_id = 1, -- Assuming society ID 1 is the police department
-            balance = 50000.0,
-            usage = "society_bank",
-            label = "Police Department Account",
-            iban = "CCCC-1234-5678-9012",
-        },
-        {
-            id = 4,
-            owner_type = Config.MagicString.KeyStringSociety,
-            owner_id = 2, -- Assuming society ID 2 is the ambulance service
-            balance = 30000.0,
-            usage = "society_bank",
-            label = "Ambulance Service Account",
-            iban = "DDDD-1234-5678-9012",
-        },
-        {
-            id = 5,
-            owner_type = Config.MagicString.KeyStringPlayers,
-            owner_id = 3,
-            balance = 20000.0,
-            usage = "player_bank",
-            label = "Mike's Account",
-            iban = "EEEE-1234-5678-9012",
-        },
-        {
-            id = 6,
-            owner_type = Config.MagicString.KeyStringPlayers,
-            owner_id = 4,
-            balance = 25000.0,
-            usage = "player_bank",
-            label = "Emily's Account",
-            iban = "FFFF-1234-5678-9012",
-        },
-    },
+    maxIdentityId = 5,
+    maxPlayerId = 5,
+    maxAccountId = 6,
+    maxTransactionId = 1,
     societies = {
         {
             id = 1,
@@ -73,7 +16,7 @@ Database = {
             id = 2,
             name = "ambulance",
             label = "Ambulance Service",
-        }
+        },
     },
     roles = {
         {
@@ -83,7 +26,11 @@ Database = {
             label = "Officer",
             salary = 5000,
             isDefault = true,
-            bankNotification = false
+            bankNotification = false,
+            canPromote = {
+            },
+            canDemote = {
+            }
         },
         {
             id = 2,
@@ -92,7 +39,11 @@ Database = {
             label = "Sergeant",
             salary = 7000,
             isDefault = false,
-            bankNotification = false
+            bankNotification = false,
+            canPromote = {
+            },
+            canDemote = {
+            }
         },
         {
             id = 3,
@@ -101,7 +52,11 @@ Database = {
             label = "Chief",
             salary = 10000,
             isDefault = false,
-            bankNotification = true
+            bankNotification = true,
+            canPromote = {
+            },
+            canDemote = {
+            }
         },
         {
             id = 4,
@@ -110,7 +65,11 @@ Database = {
             label = "Paramedic",
             salary = 4500,
             isDefault = true,
-            bankNotification = false
+            bankNotification = false,
+            canPromote = {
+            },
+            canDemote = {
+            }
         },
         {
             id = 5,
@@ -119,8 +78,12 @@ Database = {
             label = "Doctor",
             salary = 8000,
             isDefault = false,
-            bankNotification = true
-        }
+            bankNotification = true,
+            canPromote = {
+            },
+            canDemote = {
+            }
+        },
     },
     members = {
         {
@@ -130,96 +93,169 @@ Database = {
             playerId = 1
         },
         {
-            id = 2,
-            societyId = 2,
-            roleId = 4,
-            playerId = 2
-        },
-        {
             id = 3,
             societyId = 1,
             roleId = 2,
             playerId = 3
         },
         {
+            id = 2,
+            societyId = 2,
+            roleId = 4,
+            playerId = 2
+        },
+        {
             id = 4,
             societyId = 2,
             roleId = 5,
             playerId = 4
-        }
+        },
     },
     identities = {
         {
             id = 1,
-            firstname = "John",
-            lastname = "Doe",
-            dateofbirth = "1990-01-01",
+            firstname = "john",
+            lastname = "doe",
+            dateofbirth = "1990-01-01"
         },
         {
             id = 2,
-            firstname = "Jane",
-            lastname = "Smith",
-            dateofbirth = "1992-02-02",
+            firstname = "jane",
+            lastname = "smith",
+            dateofbirth = "1992-02-02"
         },
         {
             id = 3,
-            firstname = "Mike",
-            lastname = "Johnson",
-            dateofbirth = "1988-03-03",
+            firstname = "mike",
+            lastname = "johnson",
+            dateofbirth = "1988-03-03"
         },
         {
             id = 4,
-            firstname = "Emily",
-            lastname = "Davis",
-            dateofbirth = "1995-04-04",
-        }
+            firstname = "emily",
+            lastname = "davis",
+            dateofbirth = "1995-04-04"
+        },
+        {
+            id = 5,
+            firstname = "marc",
+            lastname = "hammond",
+            dateofbirth = "2000-07-29"
+        },
     },
     players = {
         {
             id = 1,
             identityId = 1,
             identifier = "steam:110000000000001",
-            money = 10000,
         },
         {
             id = 2,
             identityId = 2,
             identifier = "steam:110000000000002",
-            money = 15000,
         },
         {
             id = 3,
             identityId = 3,
             identifier = "steam:110000000000003",
-            money = 20000,
         },
         {
             id = 4,
             identityId = 4,
             identifier = "steam:110000000000004",
-            money = 25000,
-        }
-    },
+        },
+        {
+            id = 5,
+            identityId = 5,
+            identifier = "steam:110000107b6081d",
+            location = {
+                x = -1045.78,
+                y = -2728.86,
+                z = 20.16,
+                heading = 25.52
+            },
+        },
+   },
+    accounts = {
+        {
+            id = 1,
+            label = "John's Account",
+            owner_type = "DuckPlayers",
+            owner_id = 1,
+            balance = 10000.0,
+            usage = "player_bank",
+            iban = "AAAA-1234-5678-9012"
+        },
+        {
+            id = 2,
+            label = "Jane's Account",
+            owner_type = "DuckPlayers",
+            owner_id = 2,
+            balance = 15000.0,
+            usage = "player_bank",
+            iban = "BBBB-1234-5678-9012"
+        },
+        {
+            id = 3,
+            label = "Police Department Account",
+            owner_type = "DuckSociety",
+            owner_id = 1,
+            balance = 50000.0,
+            usage = "society_bank",
+            iban = "CCCC-1234-5678-9012"
+        },
+        {
+            id = 4,
+            label = "Ambulance Service Account",
+            owner_type = "DuckSociety",
+            owner_id = 2,
+            balance = 30000.0,
+            usage = "society_bank",
+            iban = "DDDD-1234-5678-9012"
+        },
+        {
+            id = 5,
+            label = "Mike's Account",
+            owner_type = "DuckPlayers",
+            owner_id = 3,
+            balance = 20000.0,
+            usage = "player_bank",
+            iban = "EEEE-1234-5678-9012"
+        },
+        {
+            id = 6,
+            label = "Emily's Account",
+            owner_type = "DuckPlayers",
+            owner_id = 4,
+            balance = 25000.0,
+            usage = "player_bank",
+            iban = "FFFF-1234-5678-9012"
+        },
+   },
     transactions = {
         {
             id = 1,
-            owner_type = Config.MagicString.KeyStringAccount,
+            label = "Payment for services",
+            owner_type = "DuckAccount",
             owner_id = 4,
-            target_type = Config.MagicString.KeyStringAccount,
+            target_type = "DuckAccount",
             target_id = 1,
             balance = 1000.0,
-            label = "Payment for services",
-            payed_at = nil,
             refunded = false,
-            refunded_at = nil,
-        }
-    },
-    permissions = {
+            payed_at = nil,
+            refunded_at = nil
+        },
         {
-            id = 1,
-            name = "bank_notification",
-            label = "Bank Notification",
-            description = "Allows the entity to receive bank notifications.",
-        }
-    }
+            id = 2,
+            label = "test",
+            owner_type = "DuckAccount",
+            owner_id = 1,
+            target_type = "DuckAccount",
+            target_id = 2,
+            balance = 100,
+            refunded = false,
+            payed_at = nil,
+            refunded_at = nil
+        },
+   }
 }
