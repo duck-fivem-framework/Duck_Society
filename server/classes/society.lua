@@ -1,22 +1,16 @@
 function DuckSociety()
-  local self = {}
-  self.__metas = { object = Config.MagicString.KeyStringSociety }
 
-  self.id = nil
-  self.name = nil
-  self.label = nil
+  local self = DuckClass(Config.MagicString.KeyStringSociety)
+
   self.roles = {}
   self.members = {}
 
-  self.setId = function(id) self.id = tonumber(id) end
-  self.getId = function() return self.id end
-  
-  self.setName = function(name) self.name = string.lower(name) end
-  self.getName = function() return self.name end
-  
-  self.setLabel = function(label) self.label = label end
-  self.getLabel = function() return self.label end
-    
+  self = __LoadId(self)
+  self = __LoadName(self)
+  self = __LoadLabel(self)
+  self = __LoadAccounts(self)
+
+
   self.handlerTest = function()
     print(self.toString())
     print('----- Roles -----')
@@ -27,11 +21,44 @@ function DuckSociety()
     for _, member in pairs(self.getMembers()) do
       print(member.toString())
     end
+    print('----- Accounts -----')
+    for _, account in pairs(self.getAccounts()) do
+      print(account.toString())
+    end
+
   end
 
   self.generateEventHandler = function()
     RegisterNetEvent(self.getFullEventName('test'))
     AddEventHandler(self.getFullEventName('test'), self.handlerTest)
+  end
+
+  self.lazyLoading = function()
+    for _, role in pairs(SocietyRoles) do
+      if role.getSocietyId() == self.getId() then
+        local compatibility, errorMessage = self.addRole(role)
+        if not compatibility then
+          print(('Error adding role %s to society %s: %s'):format(role.getName(), self.getName(), errorMessage))
+        else
+          role.lazyLoading()
+        end
+      end
+    end
+
+    for k, members in pairs(SocietyMembers) do
+      if members.getSocietyId() == self.getId() then
+        self.addMember(members)
+      end
+    end
+
+    for _, account in pairs(Accounts) do
+      if account.getOwnerType() == self.__metas.object and account.getOwnerId() == self.getId() then
+        local compatibility, errorMessage = self.addAccount(account)
+        if not compatibility then
+          print(('Error adding account %s to society %s: %s'):format(account.getName(), self.getName(), errorMessage))
+        end
+      end
+    end
   end
 
 
@@ -53,12 +80,31 @@ function DuckSociety()
     end
   end
 
+  self.sendMoneyToActiveMembers = function()
+    if self.serviceCount() == 0 then
+      print('No active members in society ' .. self.getName())
+      return false, 'No active members to send money to'
+    end
+    for k,v in pairs(self.getMembers()) do
+      if v.getPlayer() ~= nil then
+        local player = v.getPlayer()
+        if player.isOnline() then
+          local money = v.getSocietyRole().getMoney()
+          if money > 0 then
+            player.addMoney(money)
+            print(('Sent $%d to player %d in society %s'):format(money, player.getId(), self.getName()))
+          end
+        end
+      end
+    end
+  end
+
   self.checkRoleCompatibility = function(role)
     if type(role) ~= 'table' then
       return false, 'Role must be a table'
     end
 
-    if not role.__metas or role.__metas.object ~= Config.MagicString.DuckSocietyRoles then
+    if not role.__metas or role.__metas.object ~= Config.MagicString.KeyStringRoles then
       return false, 'Invalid role object'
     end
 
@@ -376,6 +422,25 @@ function DuckSociety()
     return true, 'Player demoted successfully'
   end
 
+  self.notificateBank = function(owner, target, transaction)
+      for _, member in pairs(self.getMembers()) do
+          if member.getSocietyRole().getBankNotification() then
+              local player = member.getPlayer()
+              if player.isOnline() then
+                  print(string.format("Transaction from %s to %s: %s", owner.getIban(), target.getIban(), transaction.getBalance()))
+              end
+          end
+      end
+  end
+
+  self.storeInFile = function(f)
+      f:write("        {\n")
+      f:write("            id = " .. self.getId() .. ",\n")
+      f:write("            name = \"" .. self.getName() .. "\",\n")
+      f:write("            label = \"" .. self.getLabel() .. "\",\n")
+      f:write("        },\n")
+  end
+
   self.toString = function()
     return string.format("DuckSociety: { id: %d, name: '%s', label: '%s' }",
       self.getId(), self.getName(), self.getLabel())
@@ -383,79 +448,3 @@ function DuckSociety()
 
   return self
 end
-
-function LoadSocieties()
-  for k,v in pairs(Database.societies) do
-    local society = DuckSociety()
-    society.loadFromDatabase(v)
-    Societies[society.getId()] = society
-  end
-end
-
-RegisterCommand("getSocietyStatus", function(source, args, rawCommand)
-    local societyId = tonumber(args[1])
-    if not societyId then
-        print("Usage: /getSocietyStatus <societyId>")
-        return
-    end
-
-    local society = Societies[societyId]
-    if not society then
-        print("Society with ID " .. societyId .. " not found.")
-        return
-    end
-
-    print(society.toString())
-    print('----- Roles -----')
-    for _, role in pairs(society.getRoles()) do
-        print(role.toString())
-    end
-    print('----- Members -----')
-    for _, member in pairs(society.getMembers()) do
-        print(member.toString())
-    end
-end, false)
-
-RegisterCommand("editSocietyLabel", function(source, args, rawCommand)
-    if source == 0 then
-        if #args < 2 then
-            print("Usage: editSocietyLabel <societyId> <newLabel>")
-            return
-        end
-
-        local societyId = tonumber(args[1])
-        local newLabel = args[2]
-        if not societyId or not newLabel then
-            print("Invalid society ID or label.")
-            return
-        end
-        
-        local society = Societies[societyId]
-        if not society then
-            print("Society with ID " .. societyId .. " not found.")
-            return
-        end
-
-        local exist = false
-        for _, s in pairs(Societies) do
-            if s.getLabel() == newLabel and s.getId() ~= societyId then
-                exist = true
-                break
-            end
-        end
-
-        if exist then
-            print("A society with the label '" .. newLabel .. "' already exists.")
-            return
-        end
-        if newLabel == "" then
-            print("Label cannot be empty.")
-            return
-        end
-
-        society.setLabel(newLabel)
-        print("Society label updated successfully: " .. society.toString())
-    else
-        print("This command can only be used from the server console.")
-    end
-end, false)

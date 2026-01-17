@@ -1,86 +1,4 @@
-function DuckPlayer()
-    local self = {}
-    self.__metas = { object = Config.MagicString.KeyStringPlayers }
-
-    self.id = nil
-    self.identifier = nil
-
-    self.identityId = nil
-
-    self.money = 0
-    self.online = false
-    self.source = nil -- This will hold the source of the player, if applicable
-
-    self.setId = function(id) self.id = tonumber(id) end
-    self.getId = function() return self.id end
-    self.setIdentifier = function(identifier) self.identifier = identifier end
-    self.getIdentifier = function() return self.identifier end
-    self.setMoney = function(money) self.money = tonumber(money) end
-    self.getMoney = function() return self.money end
-    self.setOnline = function(online) self.online = online end
-    self.isOnline = function() return self.online end
-    self.setSource = function(source) self.source = source end
-    self.getSource = function() return self.source end
-    self.getIdentityId = function() return self.identityId end
-    self.setIdentityId = function(identityId) self.identityId = tonumber(identityId) end
-
-
-    self.loadFromDatabase = function(data)
-        if data then
-            self.setId(data.id)
-            self.setIdentifier(data.identifier)
-            if data.identityId ~= nil then
-                local identity = Identities[data.identityId]
-                if identity then
-                    self.setIdentity(identity)
-                else
-                    print("Error: Identity not found for ID " .. tostring(data.identityId))
-                end
-            end
-            self.setMoney(data.money or 0) -- Default to 0 if money is not provided
-        else
-            print("Error: No data provided to load DuckPlayers")
-        end
-    end
-
-
-    self.getIdentity = function()
-        if not self.identityId then
-            print("Error: Identity ID is not set")
-            return nil, 'Identity ID is not set'
-        end
-
-        local identity = Identities[self.identityId]
-        if not identity then
-            print("Error: Identity not found")
-            return nil, 'Identity not found'
-        end
-
-        return identity, 'Identity retrieved successfully'
-    end
-
-    self.setIdentity = function(identity)
-        if not identity or type(identity) ~= 'table' then
-            print("Error: Invalid identity provided")
-            return false, 'Invalid identity provided'
-        end
-
-        if not identity.__metas or identity.__metas.object ~= Config.MagicString.KeyStringIdentity then
-            return false, 'Invalid identity object'
-        end
-
-        self.identityId = identity.getId()
-        return true, 'Identity set successfully'
-    end
-
-    self.toString = function()
-        return string.format("DuckPlayer: { id: %d, identifier: '%s', money: %d, identity: %s}",
-            self.getId(), self.getIdentifier(), self.getMoney(),
-            self.identityId and self.getIdentity().getFullName() or 'nil')
-    end
-
-    return self
-end
+Players = {}
 
 function LoadPlayers()
     for k,v in pairs(Database.players) do
@@ -108,7 +26,6 @@ function CreatePlayerWithInfo(identifier, name)
 
     playerObject.setId(Database.maxPlayerId) -- Assuming getNextId() is a method to get the next available ID
     playerObject.setIdentifier(identifier)
-    playerObject.setMoney(0)
     playerObject.setIdentityId(identity.getId()) -- Set to nil initially
     Players[playerObject.getId()] = playerObject
 
@@ -154,7 +71,6 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
 
     if not playerObject then
         -- Create a new DuckPlayer instance if the player does not exist
-
         playerObject = CreatePlayerWithInfo(steamIdentifier, name)
     end
 
@@ -165,12 +81,44 @@ local function OnPlayerConnecting(name, setKickReason, deferrals)
     StoreDatabase()
 end
 
+RegisterNetEvent('requestLastCoords', function()
+    local src = source
+    local identifiers = GetPlayerIdentifiers(src)
+
+    local steamIdentifier
+    for key, value in pairs(identifiers) do
+        if string.find(value, "steam") then
+            steamIdentifier = value
+            break
+        end
+    end
+    if not steamIdentifier then
+        print("No Steam identifier found for player " .. src)
+        return
+    end
+    for key, value in pairs(Players) do
+        if value.getIdentifier() == steamIdentifier then
+            if value.getLocation() ~= nil then
+                print(string.format("Player %d last known position: X: %.2f, Y: %.2f, Z: %.2f, Heading: %.2f",
+                    value.getId(), value.getLocation().getX(), value.getLocation().getY(),
+                    value.getLocation().getZ(), value.getLocation().getHeading()))
+                TriggerClientEvent('teleportToLastCoords', source, value.getLocation().getX(), value.getLocation().getY(), value.getLocation().getZ(), value.getLocation().getHeading())
+                else
+                print("No last known position found for player " .. value.getId())
+            end
+            break
+        end
+    end
+end)
 
 
 AddEventHandler("playerConnecting", OnPlayerConnecting)
 
 local function OnPlayerDropped(reason, resourceName, clientDropReason)
     local player = source
+
+    local playerPed = GetPlayerPed(player)
+
     local playerObject = nil
     for _, v in pairs(GetPlayerIdentifiers(player)) do
         if string.find(v, "steam") then
@@ -186,6 +134,23 @@ local function OnPlayerDropped(reason, resourceName, clientDropReason)
     end
 
     if playerObject then
+        -- Vérifie que le ped existe encore
+        if DoesEntityExist(playerPed) then
+            local coords = GetEntityCoords(playerPed)
+            local heading = GetEntityHeading(playerPed)
+
+            playerObject.setLocation(DuckLocation())
+
+            playerObject.getLocation().setX(string.format("%.2f", coords.x))
+            playerObject.getLocation().setY(string.format("%.2f", coords.y))
+            playerObject.getLocation().setZ(string.format("%.2f", coords.z))
+            playerObject.getLocation().setHeading(string.format("%.2f", heading))
+
+            -- Log the last position of the player
+            print(string.format("Dernière position de %d : X: %.2f, Y: %.2f, Z: %.2f, H: %.2f", 
+                player, coords.x, coords.y, coords.z, heading))
+        end
+
         playerObject.setOnline(false)
         playerObject.setSource(nil) -- Clear the source when the player drops
         print(string.format("Player %s with ID %d has dropped. Reason: %s, Resource: %s, Client Drop Reason: %s",

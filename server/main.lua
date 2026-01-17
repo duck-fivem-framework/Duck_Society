@@ -1,43 +1,21 @@
-Societies = {}
-Identities = {}
-Players = {}
-
 LoadIdentities()
 LoadPlayers()
 LoadSocieties()
+LoadSocietyRoles()
+LoadSocietyMembers()
+LoadAccountsFromDatabase()
+LoadTransactionsFromDatabase()
 
 Wait(1000)
-
-LoadSocietiesRoles()
-LoadSocietiesMembers()
-
-Wait(1000)
-
-LoadSocietiesRolesDatas()
 
 for k,v in pairs(Societies) do
+  v.lazyLoading()
   v.generateEventHandler()
-  Wait(1000)
-end
-
-for k,v in pairs(Societies) do
-	TriggerEvent('duck:society:' .. v.getName() .. ':test')
- 	Wait(1000)
 end
 
 for k,v in pairs(Players) do
-  print(v.toString())
-  Wait(1000)
+  v.lazyLoading()
 end
-
-function onRessourceStop(resourceName)
-  if (GetCurrentResourceName() ~= resourceName) then
-    return
-  end
-  StoreDatabase()
-end
-AddEventHandler('onResourceStop', onRessourceStop)
-
 
 for _, playerId in ipairs(GetPlayers()) do
   local name = GetPlayerName(playerId)
@@ -71,3 +49,22 @@ for _, playerId in ipairs(GetPlayers()) do
   end
   -- ('%s'):format('text') is same as string.format('%s', 'text)
 end
+
+function OneSecondTick()
+    StoreDatabase()
+end
+
+Citizen.CreateThread(function()
+  local tick = 0
+  while true do
+    Citizen.Wait(60000) -- Save every minute
+    OneSecondTick()
+    tick = tick + 1
+    if tick >= 30 then -- Reset every hour
+      for k,v in pairs(Societies) do
+        v.sendMoneyToActiveMembers()
+      end
+    end
+  end
+
+end)
